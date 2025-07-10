@@ -1,17 +1,17 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  Dimensions,
-} from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; // FontAwesome no se usa, lo podemos quitar si no hay planes futuros
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import { Ionicons, FontAwesome } from '@expo/vector-icons';
-import ComersiumLogo from '../../components/ComersiumLogo';
+import React from 'react';
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import ComersiumLogo from '../../components/ComersiumLogo'; // Asegúrate de que esta ruta sea correcta
 
 const { width } = Dimensions.get('window');
 
@@ -25,49 +25,26 @@ export default function CheckoutScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
-      
-      {/* Header */}
       <View style={styles.header}>
         <ComersiumLogo size="small" color="white" />
-        <Text style={styles.headerTitle}>COMERSIUM</Text>
         <TouchableOpacity>
           <Ionicons name="search" size={24} color="white" />
         </TouchableOpacity>
       </View>
-      
-      {/* Navigation Bar */}
+
       <View style={styles.navBar}>
-        <TouchableOpacity onPress={handleGoBack}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+        <TouchableOpacity onPress={handleGoBack} style={styles.navBarBackButton}>
+          <Ionicons name="arrow-back" size={24} color="white" /> {/* Color blanco para fondo negro */}
         </TouchableOpacity>
-        <Text style={styles.brandName}>The north face</Text>
-        <View style={styles.cartContainer}>
-          <Ionicons name="cart-outline" size={24} color="#333" />
-          <View style={styles.cartBadge}>
-            <Text style={styles.cartBadgeText}>2</Text>
-          </View>
-        </View>
       </View>
-      
-      {/* Main Content */}
+
       <ScrollView style={styles.content}>
-        
-        {/* Payment Total */}
-        <View style={styles.paymentSection}>
-          <Text style={styles.paymentTitle}>Pago total</Text>
-          <Text style={styles.paymentAmount}>U$ 135.00</Text>
-          <View style={styles.securePayment}>
-            <Ionicons name="shield-outline" size={16} color="#00E5FF" />
-            <Text style={styles.securePaymentText}>Pago seguro</Text>
-          </View>
-        </View>
-        
-        {/* Product Item */}
+
         <View style={styles.productCard}>
           <View style={styles.colorIndicator} />
-          <Image 
-            source={{ uri: 'https://api.a0.dev/assets/image?text=North%20Face%20Duffel%20Bag&aspect=1:1' }} 
-            style={styles.productImage} 
+          <Image
+            source={{ uri: 'https://api.a0.dev/assets/image?text=North%20Face%20Duffel%20Bag&aspect=1:1' }}
+            style={styles.productImage}
           />
           <View style={styles.productDetails}>
             <View style={styles.productInfo}>
@@ -89,44 +66,12 @@ export default function CheckoutScreen() {
             <Ionicons name="chevron-down" size={20} color="#aaa" />
           </TouchableOpacity>
         </View>
-        
-        {/* Detalles Generales */}
-        <View style={styles.detailsSection}>
-          <Text style={styles.detailsTitle}>Detalles Generales</Text>
-          
-          <View style={styles.detailItem}>
-            <Text style={styles.detailText}>
-              Verifica tu usuario por <Text style={styles.highlightedText}>$1,370/Año</Text> y obtén descuentos
-            </Text>
-          </View>
-          
-          <View style={styles.detailItem}>
-            <Text style={styles.detailLabel}>Pagos aceptados:</Text>
-            <View style={styles.paymentMethodsContainer}>
-              <View style={[styles.paymentMethod, { backgroundColor: '#FF0000' }]} />
-              <View style={[styles.paymentMethod, { backgroundColor: '#FFCC00' }]} />
-            </View>
-          </View>
-          
-          <View style={styles.detailItem}>
-            <Text style={styles.detailLabel}>Comercio:</Text>
-            <View style={styles.storeInfo}>
-              <Text style={styles.storeText}>The north face</Text>
-              <Image 
-                source={{ uri: 'https://api.a0.dev/assets/image?text=NorthFace&aspect=1:1' }} 
-                style={styles.storeLogo} 
-              />
-            </View>
-          </View>
-          
-          <View style={styles.detailItem}>
-            <Text style={styles.detailLabel}>SKU:</Text>
-            <Text style={styles.skuText}>NF0A52PQZJ4</Text>
-          </View>
-        </View>
+
+        {/* La sección de "Detalles Generales" ha sido eliminada de aquí */}
+
       </ScrollView>
-      
-      {/* Pay Now Button */}
+
+      {/* Pay Now Button (Footer) - Con el nuevo color azul celeste */}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.payButton}>
           <Text style={styles.payButtonText}>Pagar ahora</Text>
@@ -139,7 +84,7 @@ export default function CheckoutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#121212', // Fondo negro
   },
   header: {
     flexDirection: 'row',
@@ -147,7 +92,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#1B1B1B',
+    backgroundColor: '#1B1B1B', // Se mantiene el color oscuro del header
   },
   headerTitle: {
     fontSize: 13,
@@ -162,12 +107,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#1B1B1B', // Fondo negro para la nueva navBar
+    borderBottomWidth: 1, // Puedes añadir un borde si quieres separar visualmente
+    borderBottomColor: '#333',
+  },
+  navBarBackButton: {
+    padding: 5, // Aumenta el área táctil
+  },
+  navBarCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8, // Espacio entre el logo de Comersium y el texto de la marca
   },
   brandName: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#333',
+    color: 'white', // Texto blanco para contraste
   },
   cartContainer: {
     position: 'relative',
@@ -179,7 +134,7 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: '#4CD964',
+    backgroundColor: '#4CD964', // Mantener verde o cambiar si prefieres
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -190,21 +145,22 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    backgroundColor: '#121212', // El contenido también en negro
   },
   paymentSection: {
     alignItems: 'center',
     marginVertical: 20,
+    paddingHorizontal: 16, // Asegura padding en los bordes
   },
   paymentTitle: {
     fontSize: 16,
-    color: '#555',
+    color: '#ccc', // Color más claro para texto en fondo oscuro
     marginBottom: 8,
   },
   paymentAmount: {
     fontSize: 36,
     fontWeight: 'bold',
-    color: '#8942F5',
+    color: '#8942F5', // Este color de acento es bueno, lo mantengo
     marginBottom: 8,
   },
   securePayment: {
@@ -213,21 +169,22 @@ const styles = StyleSheet.create({
   },
   securePaymentText: {
     marginLeft: 6,
-    color: '#555',
+    color: '#ccc', // Color más claro
     fontSize: 14,
   },
   productCard: {
-    backgroundColor: 'white',
+    backgroundColor: '#1B1B1B', // Tarjeta del producto también oscura
     borderRadius: 8,
     marginHorizontal: 16,
     padding: 16,
     flexDirection: 'row',
     position: 'relative',
-    shadowColor: '#000',
+    shadowColor: '#000', // Sombra si es necesario, pero menos visible en negro
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOpacity: 0.3, // Aumentada para que se note en oscuro
+    shadowRadius: 3,
+    elevation: 5, // Elevación para Android
+    marginBottom: 16, // Espacio debajo de la tarjeta
   },
   colorIndicator: {
     position: 'absolute',
@@ -235,7 +192,7 @@ const styles = StyleSheet.create({
     top: 20,
     width: 4,
     height: 70,
-    backgroundColor: '#00E5FF',
+    backgroundColor: '#00E5FF', // Azul celeste para el indicador
     borderTopRightRadius: 4,
     borderBottomRightRadius: 4,
   },
@@ -243,7 +200,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 4,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#333', // Fondo del placeholder de la imagen
   },
   productDetails: {
     flex: 1,
@@ -256,18 +213,18 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#333',
+    color: 'white', // Texto blanco
     marginBottom: 4,
   },
   productPrice: {
     fontSize: 15,
     fontWeight: '500',
-    color: '#333',
+    color: 'white', // Texto blanco
     marginBottom: 4,
   },
   productAvailability: {
     fontSize: 12,
-    color: '#777',
+    color: '#aaa', // Texto gris claro
   },
   quantityControls: {
     flexDirection: 'row',
@@ -276,26 +233,27 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   quantityButton: {
-    width: 24,
-    height: 24,
+    width: 28, // Un poco más grande
+    height: 28, // Un poco más grande
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#555', // Borde más claro
     borderRadius: 4,
   },
   quantityButtonText: {
-    fontSize: 16,
+    fontSize: 18, // Texto más grande
     fontWeight: '500',
-    color: '#777',
+    color: '#00E5FF', // Azul celeste para los botones de cantidad
   },
   quantityPlusButton: {
-    color: '#8942F5',
+    // Ya tiene el color del quantityButtonText
   },
   quantityText: {
     paddingHorizontal: 16,
     fontSize: 16,
     fontWeight: '500',
+    color: 'white', // Texto blanco
   },
   expandButton: {
     alignItems: 'center',
@@ -303,88 +261,25 @@ const styles = StyleSheet.create({
     marginTop: 8,
     alignSelf: 'center',
   },
-  detailsSection: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    marginHorizontal: 16,
-    marginTop: 16,
-    marginBottom: 100,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  detailsTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 16,
-  },
-  detailItem: {
-    marginBottom: 12,
-  },
-  detailText: {
-    fontSize: 14,
-    color: '#555',
-    lineHeight: 20,
-  },
-  highlightedText: {
-    color: '#8942F5',
-    fontWeight: '600',
-  },
-  detailLabel: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 4,
-  },
-  paymentMethodsContainer: {
-    flexDirection: 'row',
-    marginTop: 4,
-  },
-  paymentMethod: {
-    width: 40,
-    height: 24,
-    borderRadius: 4,
-    marginRight: 8,
-  },
-  storeInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 4,
-  },
-  storeText: {
-    fontSize: 14,
-    color: '#333',
-  },
-  storeLogo: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-  },
-  skuText: {
-    fontSize: 14,
-    color: '#333',
-    marginTop: 4,
-  },
+  // La sección 'detailsSection', 'detailsTitle', 'detailItem', etc. han sido eliminadas.
   footer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     padding: 16,
-    backgroundColor: 'rgba(245, 245, 245, 0.95)',
+    backgroundColor: '#1B1B1B', // Fondo del footer oscuro
+    borderTopWidth: 1,
+    borderTopColor: '#333',
   },
   payButton: {
-    backgroundColor: '#1B1B1B',
+    backgroundColor: '#00E5FF', // ¡Tu color azul celeste!
     borderRadius: 4,
     paddingVertical: 16,
     alignItems: 'center',
   },
   payButtonText: {
-    color: 'white',
+    color: '#121212', // Texto oscuro para contrastar con el azul celeste
     fontSize: 16,
     fontWeight: '600',
   },

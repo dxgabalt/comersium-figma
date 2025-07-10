@@ -57,13 +57,13 @@ export default function RootLayout() {
         }}
         initialRouteName={initialSegment || 'info'} 
       >
-        <Stack.Screen name="info" />           
-        <Stack.Screen name="onboarding" />     
-        <Stack.Screen name="auth" />           
-        <Stack.Screen name="chat" />           
-        <Stack.Screen name="subscription" />   
-        <Stack.Screen name="(main)" />       
-         <Stack.Screen name="+not-found" />
+        <Stack.Screen name="info"/>           
+        <Stack.Screen name="onboarding"/>     
+        <Stack.Screen name="auth"/>           
+        <Stack.Screen name="chat"/>           
+        <Stack.Screen name="subscription"/>   
+        <Stack.Screen name="(main)"/>       
+         <Stack.Screen name="+not-found"/>
       </Stack>
       <StatusBar />
     </ThemeProvider>

@@ -32,6 +32,15 @@ interface CarouselItem {
   description: string;
 }
 
+// Puedes definir una interfaz para los ítems de promoción si quieres tipar más estrictamente
+interface PromotionItem {
+  id: string;
+  image: string;
+  rating: number;
+  store: string;
+  // Añade cualquier otra propiedad necesaria para la pantalla McDonaldsDetails si la hay
+}
+
 const PRODUCTS: Product[] = [
   {
     id: '1',
@@ -72,6 +81,13 @@ const CAROUSEL_DATA: CarouselItem[] = [
   { id: '4', image: Carrusel4, logo: 'Comersium', title: 'Promociones Especiales', subtitle: 'Descuentos imperdibles', description: 'Aprovecha nuestras ofertas por tiempo limitado en tus productos favoritos.' },
 ];
 
+// Datos para las promociones destacadas, para facilitar el mapeo.
+const PROMOTIONS_DATA: PromotionItem[] = [
+  { id: 'promo1', image: 'https://api.a0.dev/assets/image?text=Watermelon%20Drink&aspect=1:1', rating: 4.5, store: 'Comercio 1' },
+  { id: 'promo2', image: 'https://api.a0.dev/assets/image?text=Energy%20Drink&aspect=1:1', rating: 4.8, store: 'Comercio 2' },
+  { id: 'promo3', image: 'https://api.a0.dev/assets/image?text=Super%20Combo&aspect=1:1', rating: 4.7, store: 'Comercio 3' },
+];
+
 const AUTO_SWIPE_INTERVAL = 5000;
 
 export default function HomeScreen() {
@@ -89,17 +105,28 @@ export default function HomeScreen() {
     { key: 'settings', icon: 'settings-outline', text: 'Ajustes', route: 'CategoriesScreen' },
   ];
 
-  const handleProductPress = (product: Product) => {
-    navigation.navigate('CheckoutScreen' as never);
+  // Función para manejar la navegación a McDonaldsDetails
+  const handlePromotionPress = () => {
+    navigation.navigate('McDonaldsDetails' as never); // Asegúrate de que 'McDonaldsDetails' sea el nombre correcto de tu ruta
   };
 
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab);
-    const selectedNavItem = navItems.find(item => item.key === tab);
-    if (selectedNavItem && selectedNavItem.route) {
-      if (selectedNavItem.route === 'HomeScreen') {
-        navigation.navigate('(main)' as never);
-      } else {
+    // Lógica de navegación basada en el tab seleccionado
+    if (tab === 'home') {
+      // Si el tab es 'home', navega a la HomeScreen (si es parte de un navegador Stack/Tab principal)
+      // O no hagas nada si ya estás en Home y solo quieres actualizar el estado.
+      // Para Expo Router con grupos, (main) podría ser el grupo principal.
+      // Aquí asumo que 'HomeScreen' es la ruta actual y no necesitas navegar a ella misma.
+    } else if (tab === 'logowall') {
+      // *** CAMBIO CLAVE AQUÍ: NAVEGAR A LOGOWALLSCREEN ***
+      navigation.navigate('LogoWallScreen' as never);
+    } else if (tab === 'populares') {
+      navigation.navigate('Home' as never); // Asumo que 'Home' es la ruta a la que quieres ir desde 'populares'
+    } else {
+      // Para otros tabs, si tienen una ruta asociada en navItems, podrías navegar.
+      const selectedNavItem = navItems.find(item => item.key === tab);
+      if (selectedNavItem && selectedNavItem.route && selectedNavItem.route !== 'HomeScreen') {
         navigation.navigate(selectedNavItem.route as never);
       }
     }
@@ -141,15 +168,13 @@ export default function HomeScreen() {
       <StatusBar style="light" />
 
       <View style={styles.header}>
-        {/* Reemplazado ComersiumLogo por el DiamondIcon */}
         <TouchableOpacity onPress={() => navigation.navigate('subscription' as never)}>
           <Image
             source={DiamondIcon}
-            style={styles.headerDiamondIcon} // Usaremos un estilo específico para el encabezado
+            style={styles.headerDiamondIcon}
             resizeMode="contain"
           />
         </TouchableOpacity>
-        {/* Mantén ComersiumText si es necesario, o elimínalo si solo quieres el ícono */}
         <ComersiumText size="small" color="white" />
         <View style={styles.headerIcons}>
           <TouchableOpacity style={styles.profileIcon}>
@@ -164,6 +189,7 @@ export default function HomeScreen() {
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabsContainer}>
         <TouchableOpacity
           style={[styles.tab, selectedTab === 'logowall' && styles.activeTab]}
+          // Ahora este onPress navegará a LogoWallScreen
           onPress={() => handleTabChange('logowall')}
         >
           <Text style={[styles.tabText, selectedTab === 'logowall' && styles.activeTabText]}>LOGOWALL</Text>
@@ -210,38 +236,22 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Promociones destacadas ★</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.promotionsContainer}>
-          <TouchableOpacity style={styles.promotionItem}>
-            <Image
-              source={{ uri: 'https://api.a0.dev/assets/image?text=Watermelon%20Drink&aspect=1:1' }}
-              style={styles.promotionImage}
-            />
-            <View style={styles.promotionRating}>
-              <Text style={styles.promotionRatingText}>★ 4.5</Text>
-            </View>
-            <Text style={styles.promotionStore}>Comercio 1</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.promotionItem}>
-            <Image
-              source={{ uri: 'https://api.a0.dev/assets/image?text=Energy%20Drink&aspect=1:1' }}
-              style={styles.promotionImage}
-            />
-            <View style={styles.promotionRating}>
-              <Text style={styles.promotionRatingText}>★ 4.8</Text>
-            </View>
-            <Text style={styles.promotionStore}>Comercio 2</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.promotionItem}>
-            <Image
-              source={{ uri: 'https://api.a0.dev/assets/image?text=Super%20Combo&aspect=1:1' }}
-              style={styles.promotionImage}
-            />
-            <View style={styles.promotionRating}>
-              <Text style={styles.promotionRatingText}>★ 4.7</Text>
-            </View>
-            <Text style={styles.promotionStore}>Comercio 3</Text>
-          </TouchableOpacity>
+          {PROMOTIONS_DATA.map((promotion) => (
+            <TouchableOpacity
+              key={promotion.id}
+              style={styles.promotionItem}
+              onPress={handlePromotionPress} // Aquí se llama a la función de navegación
+            >
+              <Image
+                source={{ uri: promotion.image }}
+                style={styles.promotionImage}
+              />
+              <View style={styles.promotionRating}>
+                <Text style={styles.promotionRatingText}>★ {promotion.rating.toFixed(1)}</Text>
+              </View>
+              <Text style={styles.promotionStore}>{promotion.store}</Text>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
       </View>
 
@@ -302,9 +312,9 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     backgroundColor: '#1B1B1B',
   },
-  headerDiamondIcon: { // Nuevo estilo para el ícono de diamante en el encabezado
-    width: 30, // Ajusta el tamaño según sea necesario
-    height: 30, // Ajusta el tamaño según sea necesario
+  headerDiamondIcon: {
+    width: 30,
+    height: 30,
   },
   headerIcons: {
     flexDirection: 'row',
@@ -320,8 +330,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   tab: {
-    paddingHorizontal: 15,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
     marginHorizontal: 5,
   },
   activeTab: {

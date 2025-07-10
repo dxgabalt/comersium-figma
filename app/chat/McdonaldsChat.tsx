@@ -1,27 +1,30 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
+  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
-import ComersiumLogo from '../../components/ComersiumLogo';
-import ComersiumText from '../../components/ComersiumText';
+// ComersiumLogo y ComersiumText ya no son necesarios si se eliminan del header
+// import ComersiumLogo from '../../components/ComersiumLogo';
+// import ComersiumText from '../../components/ComersiumText';
+import DiamondIcon from '../../assets/images/DiamondICon.png';
+import PedidoImage from '../../assets/images/Pedido.png';
 
 interface Message {
   id: string;
   text: string;
   isUser: boolean;
-  image?: string;
+  image?: any;
 }
 
 export default function McdonaldsChat() {
@@ -47,14 +50,13 @@ export default function McdonaldsChat() {
       id: '4',
       text: 'Esta es la foto de su pedido',
       isUser: false,
-      image: 'https://api.a0.dev/assets/image?text=McDonald%27s%20Burger&aspect=16:9'
+      image: PedidoImage
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    // Scroll to bottom when messages change
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollToEnd({ animated: true });
     }
@@ -63,7 +65,6 @@ export default function McdonaldsChat() {
   const handleSend = async () => {
     if (message.trim() === '') return;
 
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       text: message,
@@ -75,7 +76,6 @@ export default function McdonaldsChat() {
     setIsLoading(true);
 
     try {
-      // Call AI API for response
       const response = await fetch('https://api.a0.dev/ai/llm', {
         method: 'POST',
         headers: {
@@ -91,7 +91,6 @@ export default function McdonaldsChat() {
 
       const data = await response.json();
       
-      // Add AI response
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: data.completion || "Lo siento, no pude procesar tu solicitud en este momento.",
@@ -100,7 +99,6 @@ export default function McdonaldsChat() {
       
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
-      // Add error message if API call fails
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: "Lo siento, estamos experimentando problemas técnicos. Por favor, intenta de nuevo más tarde.",
@@ -121,10 +119,21 @@ export default function McdonaldsChat() {
     >
       <StatusBar style="light" />
       
-      {/* Header */}
       <View style={styles.header}>
-        <ComersiumLogo size="small" color="white" />
-        <ComersiumText size="small" color="white" />
+        <TouchableOpacity>
+          <Image
+            source={DiamondIcon}
+            style={styles.headerDiamondIconMain}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+        
+        {/* Eliminado ComersiumLogo y ComersiumText del centro */}
+        {/* <View style={styles.headerCenterContent}>
+          <ComersiumLogo size="small" color="white" />
+          <ComersiumText size="small" color="white" />
+        </View> */}
+
         <View style={styles.headerIcons}>
           <TouchableOpacity style={styles.profileIcon}>
             <Ionicons name="person-circle-outline" size={24} color="white" />
@@ -135,7 +144,6 @@ export default function McdonaldsChat() {
         </View>
       </View>
       
-      {/* Chat Header */}
       <View style={styles.chatHeader}>
         <TouchableOpacity 
           style={styles.backButton}
@@ -149,7 +157,6 @@ export default function McdonaldsChat() {
         </TouchableOpacity>
       </View>
       
-      {/* Chat Messages */}
       <ScrollView 
         style={styles.messagesContainer}
         ref={scrollViewRef}
@@ -160,7 +167,8 @@ export default function McdonaldsChat() {
             key={msg.id} 
             style={[
               styles.messageBubble, 
-              msg.isUser ? styles.userBubble : styles.botBubble
+              msg.isUser ? styles.userBubble : styles.botBubble,
+              !msg.isUser && msg.image ? styles.botBubbleWithImage : null
             ]}
           >
             {!msg.isUser && (
@@ -172,19 +180,19 @@ export default function McdonaldsChat() {
               styles.messageContent,
               msg.isUser ? styles.userMessageContent : styles.botMessageContent
             ]}>
+              {msg.image && (
+                <Image 
+                  source={msg.image} 
+                  style={styles.messageImage}
+                  resizeMode="cover"
+                />
+              )}
               <Text style={[
                 styles.messageText,
                 msg.isUser ? styles.userMessageText : styles.botMessageText
               ]}>
                 {msg.text}
               </Text>
-              {msg.image && (
-                <Image 
-                  source={{ uri: msg.image }} 
-                  style={styles.messageImage}
-                  resizeMode="cover"
-                />
-              )}
             </View>
           </View>
         ))}
@@ -200,7 +208,6 @@ export default function McdonaldsChat() {
         )}
       </ScrollView>
       
-      {/* Message Input */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -240,6 +247,20 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     backgroundColor: '#1B1B1B',
   },
+  headerDiamondIconMain: {
+    width: 30,
+    height: 30,
+  },
+  // Se ha eliminado headerCenterContent ya que no se utiliza
+  // headerCenterContent: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   position: 'absolute',
+  //   left: 0,
+  //   right: 0,
+  //   justifyContent: 'center',
+  //   paddingHorizontal: 70,
+  // },
   headerIcons: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -248,6 +269,10 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   notificationIcon: {},
+  headerDiamondIcon: {
+    width: 24,
+    height: 24,
+  },
   chatHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -295,6 +320,9 @@ const styles = StyleSheet.create({
   botBubble: {
     alignSelf: 'flex-start',
   },
+  botBubbleWithImage: {
+    maxWidth: '90%',
+  },
   botAvatar: {
     width: 40,
     height: 40,
@@ -334,7 +362,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 150,
     borderRadius: 10,
-    marginTop: 8,
+    marginBottom: 8,
   },
   inputContainer: {
     flexDirection: 'row',

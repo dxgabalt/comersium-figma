@@ -13,7 +13,10 @@ export default function MainLayout() {
         <Stack.Screen name="HomeScreen" />           
         <Stack.Screen name="CategoriesScreen" />     
         <Stack.Screen name="CheckoutScreen" />           
-        <Stack.Screen name="LogoWallScreen" />           
+        <Stack.Screen name="LogoWallScreen" />    
+        <Stack.Screen name="McDonaldsDetails " />   
+        <Stack.Screen name="McDonaldsInfo " />   
+     
       </Stack>
 
 

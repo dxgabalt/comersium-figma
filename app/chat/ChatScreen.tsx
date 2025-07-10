@@ -11,8 +11,7 @@ import {
   View,
 } from 'react-native';
 
-// Importar las imágenes de los avatares
-import DiamondIcon from '../../assets/images/DiamondICon.png'; // Descomentado para usar el DiamondIcon
+import DiamondIcon from '../../assets/images/DiamondICon.png';
 import McDonaldAvatar from '../../assets/images/McDonald.png';
 import PizzaHutAvatar from '../../assets/images/PizzaHut.png';
 import SINSAAvatar from '../../assets/images/SINSA.png';
@@ -20,62 +19,62 @@ import SINSAAvatar from '../../assets/images/SINSA.png';
 interface RecentChatItem {
   id: string;
   name: string;
-  avatar?: any; // Hacemos el avatar opcional ya que ComersiumAI usará un componente
+  avatar?: any;
   lastMessage?: string;
 }
 
-// Datos de ejemplo para los chats recientes
 const RECENT_CHATS_DATA: RecentChatItem[] = [
   { id: '1', name: 'McDonald\'s', avatar: McDonaldAvatar, lastMessage: '¡Tu pedido está en camino!' },
   { id: '2', name: 'Pizza Hut', avatar: PizzaHutAvatar, lastMessage: 'Oferta especial de hoy.' },
   { id: '3', name: 'SINSA', avatar: SINSAAvatar, lastMessage: 'Consulta sobre tu factura.' },
-  { id: '4', name: 'ComersiumAI', lastMessage: '¿En qué puedo ayudarte?' }, // Eliminamos el avatar aquí, se renderizará el componente
-  // Puedes añadir más chats recientes aquí
+  { id: '4', name: 'ComersiumAI', lastMessage: '¿En qué puedo ayudarte?' },
 ];
 
 export default function ChatScreen() {
   const navigation = useNavigation();
 
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
+  const renderRecentChatItem = ({ item }: { item: RecentChatItem }) => {
+    const handlePress = () => {
+      if (item.id === '1') { // McDonald's chat
+        navigation.navigate('McdonaldsChat');
+      }
+      // Aquí podrías añadir más lógica para otros chats si es necesario
+    };
 
-  const renderRecentChatItem = ({ item }: { item: RecentChatItem }) => (
-    <TouchableOpacity style={styles.recentChatItem}>
-      {item.id === '4' ? ( // Si es el chat de ComersiumAI, renderiza el logo
-        <View style={styles.recentChatLogoContainer}>
-          <Image
-            source={DiamondIcon} // Usamos DiamondIcon aquí
-            style={styles.recentChatDiamondIcon} // Nuevo estilo para el tamaño del diamante
-            resizeMode="contain"
-          />
+    return (
+      <TouchableOpacity style={styles.recentChatItem} onPress={handlePress}>
+        {item.id === '4' ? (
+          <View style={styles.recentChatLogoContainer}>
+            <Image
+              source={DiamondIcon}
+              style={styles.recentChatDiamondIcon}
+              resizeMode="contain"
+            />
+          </View>
+        ) : (
+          <Image source={item.avatar} style={styles.recentChatAvatar} />
+        )}
+        <View style={styles.recentChatTextContent}>
+          <Text style={styles.recentChatName}>{item.name}</Text>
+          {item.lastMessage && <Text style={styles.recentChatLastMessage} numberOfLines={1}>{item.lastMessage}</Text>}
         </View>
-      ) : ( // De lo contrario, renderiza la imagen del avatar
-        <Image source={item.avatar} style={styles.recentChatAvatar} />
-      )}
-      <View style={styles.recentChatTextContent}>
-        <Text style={styles.recentChatName}>{item.name}</Text>
-        {item.lastMessage && <Text style={styles.recentChatLastMessage} numberOfLines={1}>{item.lastMessage}</Text>}
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      {/* Header */}
       <View style={styles.header}>
-        {/* DiamondIcon en el header a la izquierda */}
         <TouchableOpacity>
           <Image
             source={DiamondIcon}
-            style={styles.headerDiamondIcon} // Estilo específico para el DiamondIcon en el header
+            style={styles.headerDiamondIcon}
             resizeMode="contain"
           />
         </TouchableOpacity>
-        
-        {/* Iconos de usuario y campana a la derecha */}
+
         <View style={styles.headerIcons}>
           <TouchableOpacity style={styles.profileIcon}>
             <Ionicons name="person-circle-outline" size={28} color="white" />
@@ -86,7 +85,6 @@ export default function ChatScreen() {
         </View>
       </View>
 
-      {/* Recent Chats */}
       <View style={styles.recentChatsSection}>
         <FlatList
           data={RECENT_CHATS_DATA}
@@ -103,24 +101,24 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212', // Fondo oscuro principal
+    backgroundColor: '#121212',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // Para espaciar los elementos a los extremos
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingTop: 40,
     paddingBottom: 10,
-    backgroundColor: '#1B1B1B', // Fondo del encabezado
+    backgroundColor: '#1B1B1B',
     borderBottomWidth: 1,
     borderBottomColor: '#282828',
   },
-  headerDiamondIcon: { // Estilo para el DiamondIcon en el header
-    width: 30, // Ajusta el tamaño según sea necesario
-    height: 30, // Ajusta el tamaño según sea necesario
+  headerDiamondIcon: {
+    width: 30,
+    height: 30,
   },
-  headerIcons: { // Nuevo estilo para los iconos de la derecha
+  headerIcons: {
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -128,35 +126,34 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   notificationIcon: {},
-  
-  // Estilos para Chats Recientes
+
   recentChatsSection: {
-    flex: 1, // Permite que la sección de chats recientes ocupe todo el espacio restante
+    flex: 1,
     paddingVertical: 10,
-    backgroundColor: '#1B1B1B', // Fondo de la sección de chats
+    backgroundColor: '#1B1B1B',
   },
   recentChatsList: {
-    paddingHorizontal: 16, // Mantener padding horizontal para la lista vertical
+    paddingHorizontal: 16,
     paddingBottom: 10,
   },
   recentChatItem: {
-    flexDirection: 'row', // Ahora los elementos están en fila
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15, // Espacio entre elementos verticales (aumentado)
-    paddingVertical: 12, // Aumentado el padding vertical
-    paddingHorizontal: 15, // Aumentado el padding horizontal
-    backgroundColor: '#282828', // Fondo para cada chat reciente
-    borderRadius: 12, // Ligeramente más redondeado
+    marginBottom: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    backgroundColor: '#282828',
+    borderRadius: 12,
   },
   recentChatAvatar: {
-    width: 55, // Aumentado el tamaño del avatar
-    height: 55, // Aumentado el tamaño del avatar
-    borderRadius: 27.5, // Para hacer el avatar redondo
+    width: 55,
+    height: 55,
+    borderRadius: 27.5,
     borderWidth: 2,
-    borderColor: '#00E5FF', // Borde de color para los avatares
-    marginRight: 15, // Espacio a la derecha del avatar
+    borderColor: '#00E5FF',
+    marginRight: 15,
   },
-  recentChatLogoContainer: { // Contenedor para el logo/diamante de ComersiumAI
+  recentChatLogoContainer: {
     width: 55,
     height: 55,
     borderRadius: 27.5,
@@ -165,24 +162,24 @@ const styles = StyleSheet.create({
     marginRight: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#00E5FF', // Fondo para el logo/diamante, puedes ajustarlo
-    overflow: 'hidden', // Asegura que el contenido no se salga del contenedor redondo
+    backgroundColor: '#00E5FF',
+    overflow: 'hidden',
   },
-  recentChatDiamondIcon: { // Nuevo estilo para el tamaño del DiamondIcon dentro del contenedor
-    width: 35, // Ajusta el tamaño del diamante para que se vea bien dentro del círculo
+  recentChatDiamondIcon: {
+    width: 35,
     height: 35,
   },
   recentChatTextContent: {
-    flex: 1, // Permite que el contenido de texto ocupe el espacio restante
+    flex: 1,
   },
   recentChatName: {
-    fontSize: 16, // Aumentado el tamaño de la fuente
+    fontSize: 16,
     color: 'white',
     fontWeight: '600',
   },
   recentChatLastMessage: {
-    fontSize: 13, // Aumentado el tamaño de la fuente
+    fontSize: 13,
     color: '#999',
-    marginTop: 4, // Ligeramente más espacio
+    marginTop: 4,
   },
 });
