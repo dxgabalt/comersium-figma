@@ -8,8 +8,7 @@ export default function AuthLayout() {
         headerShown: false,
       }}>
       <Stack.Screen name='LoginScreen'/>
-      <Stack.Screen name='PrivacyPolicyScreen'/>
-      <Stack.Screen name='RegistrerScreen'/>
+      <Stack.Screen name='RegisterScreen'/>
     </Stack>
   );
 }

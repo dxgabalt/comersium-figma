@@ -1,187 +1,101 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  ActivityIndicator,
-} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
-import ComersiumLogo from '../../components/ComersiumLogo';
-import ComersiumText from '../../components/ComersiumText';
+import React from 'react';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
-interface Message {
+// Importar las imágenes de los avatares
+import DiamondIcon from '../../assets/images/DiamondICon.png'; // Descomentado para usar el DiamondIcon
+import McDonaldAvatar from '../../assets/images/McDonald.png';
+import PizzaHutAvatar from '../../assets/images/PizzaHut.png';
+import SINSAAvatar from '../../assets/images/SINSA.png';
+
+interface RecentChatItem {
   id: string;
-  text: string;
-  isUser: boolean;
-  timestamp: Date;
+  name: string;
+  avatar?: any; // Hacemos el avatar opcional ya que ComersiumAI usará un componente
+  lastMessage?: string;
 }
+
+// Datos de ejemplo para los chats recientes
+const RECENT_CHATS_DATA: RecentChatItem[] = [
+  { id: '1', name: 'McDonald\'s', avatar: McDonaldAvatar, lastMessage: '¡Tu pedido está en camino!' },
+  { id: '2', name: 'Pizza Hut', avatar: PizzaHutAvatar, lastMessage: 'Oferta especial de hoy.' },
+  { id: '3', name: 'SINSA', avatar: SINSAAvatar, lastMessage: 'Consulta sobre tu factura.' },
+  { id: '4', name: 'ComersiumAI', lastMessage: '¿En qué puedo ayudarte?' }, // Eliminamos el avatar aquí, se renderizará el componente
+  // Puedes añadir más chats recientes aquí
+];
 
 export default function ChatScreen() {
   const navigation = useNavigation();
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: '¡Hola! Soy el asistente virtual de Comersium. ¿En qué puedo ayudarte hoy?',
-      isUser: false,
-      timestamp: new Date(),
-    },
-  ]);
-  const [isTyping, setIsTyping] = useState(false);
-  const flatListRef = useRef<FlatList>(null);
 
   const handleGoBack = () => {
     navigation.goBack();
   };
 
-  const handleSendMessage = async () => {
-    if (message.trim() === '') return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: message,
-      isUser: true,
-      timestamp: new Date(),
-    };
-
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
-    setMessage('');
-    setIsTyping(true);
-
-    // Simular respuesta de la IA
-    try {
-      const response = await fetch('https://api.a0.dev/ai/llm', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: [
-            { role: 'system', content: 'Eres un asistente virtual de Comersium, una plataforma de comercio electrónico. Responde de manera amigable y concisa. Ofrece ayuda sobre productos, pedidos, envíos y promociones. Tu nombre es ComersiumAI.' },
-            { role: 'user', content: message },
-          ],
-        }),
-      });
-
-      const data = await response.json();
-      
-      // Agregar respuesta de la IA
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: data.completion || 'Lo siento, no pude procesar tu solicitud en este momento.',
-        isUser: false,
-        timestamp: new Date(),
-      };
-
-      setTimeout(() => {
-        setMessages((prevMessages) => [...prevMessages, aiMessage]);
-        setIsTyping(false);
-      }, 500);
-    } catch (error) {
-      console.error('Error al obtener respuesta de la IA:', error);
-      
-      // Mensaje de error en caso de fallo
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: 'Lo siento, parece que hay un problema de conexión. Por favor, inténtalo de nuevo más tarde.',
-        isUser: false,
-        timestamp: new Date(),
-      };
-
-      setTimeout(() => {
-        setMessages((prevMessages) => [...prevMessages, errorMessage]);
-        setIsTyping(false);
-      }, 500);
-    }
-  };
-
-  // Desplazar al último mensaje cuando se envía uno nuevo
-  useEffect(() => {
-    if (flatListRef.current && messages.length > 0) {
-      flatListRef.current.scrollToEnd({ animated: true });
-    }
-  }, [messages]);
-
-  const renderMessage = ({ item }: { item: Message }) => {
-    const messageTime = item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-    return (
-      <View style={[styles.messageContainer, item.isUser ? styles.userMessage : styles.aiMessage]}>
-        <View style={[styles.messageBubble, item.isUser ? styles.userBubble : styles.aiBubble]}>
-          <Text style={[styles.messageText, item.isUser ? styles.userText : styles.aiText]}>
-            {item.text}
-          </Text>
+  const renderRecentChatItem = ({ item }: { item: RecentChatItem }) => (
+    <TouchableOpacity style={styles.recentChatItem}>
+      {item.id === '4' ? ( // Si es el chat de ComersiumAI, renderiza el logo
+        <View style={styles.recentChatLogoContainer}>
+          <Image
+            source={DiamondIcon} // Usamos DiamondIcon aquí
+            style={styles.recentChatDiamondIcon} // Nuevo estilo para el tamaño del diamante
+            resizeMode="contain"
+          />
         </View>
-        <Text style={styles.timestamp}>{messageTime}</Text>
+      ) : ( // De lo contrario, renderiza la imagen del avatar
+        <Image source={item.avatar} style={styles.recentChatAvatar} />
+      )}
+      <View style={styles.recentChatTextContent}>
+        <Text style={styles.recentChatName}>{item.name}</Text>
+        {item.lastMessage && <Text style={styles.recentChatLastMessage} numberOfLines={1}>{item.lastMessage}</Text>}
       </View>
-    );
-  };
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
-      
+
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <View style={styles.headerCenter}>
-          <ComersiumLogo size="small" color="white" />
-          <Text style={styles.headerTitle}>Asistente</Text>
-        </View>
-        <View style={styles.headerRight} />
-      </View>
-      
-      {/* Chat Messages */}
-      <FlatList
-        ref={flatListRef}
-        data={messages}
-        renderItem={renderMessage}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.messagesContainer}
-      />
-      
-      {/* Typing Indicator */}
-      {isTyping && (
-        <View style={styles.typingContainer}>
-          <View style={styles.typingBubble}>
-            <ActivityIndicator size="small" color="#8942F5" />
-            <Text style={styles.typingText}>ComersiumAI está escribiendo...</Text>
-          </View>
-        </View>
-      )}
-      
-      {/* Message Input */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-      >
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Escribe un mensaje..."
-            placeholderTextColor="#999"
-            value={message}
-            onChangeText={setMessage}
-            multiline
+        {/* DiamondIcon en el header a la izquierda */}
+        <TouchableOpacity>
+          <Image
+            source={DiamondIcon}
+            style={styles.headerDiamondIcon} // Estilo específico para el DiamondIcon en el header
+            resizeMode="contain"
           />
-          <TouchableOpacity
-            style={[styles.sendButton, !message.trim() && styles.disabledSendButton]}
-            onPress={handleSendMessage}
-            disabled={!message.trim()}
-          >
-            <Ionicons name="send" size={20} color={message.trim() ? 'white' : '#999'} />
+        </TouchableOpacity>
+        
+        {/* Iconos de usuario y campana a la derecha */}
+        <View style={styles.headerIcons}>
+          <TouchableOpacity style={styles.profileIcon}>
+            <Ionicons name="person-circle-outline" size={28} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.notificationIcon}>
+            <Ionicons name="notifications-outline" size={28} color="white" />
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+      </View>
+
+      {/* Recent Chats */}
+      <View style={styles.recentChatsSection}>
+        <FlatList
+          data={RECENT_CHATS_DATA}
+          renderItem={renderRecentChatItem}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.recentChatsList}
+        />
+      </View>
     </View>
   );
 }
@@ -189,121 +103,86 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#121212', // Fondo oscuro principal
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between', // Para espaciar los elementos a los extremos
     paddingHorizontal: 16,
     paddingTop: 40,
     paddingBottom: 10,
-    backgroundColor: '#1B1B1B',
+    backgroundColor: '#1B1B1B', // Fondo del encabezado
+    borderBottomWidth: 1,
+    borderBottomColor: '#282828',
   },
-  backButton: {
-    padding: 5,
+  headerDiamondIcon: { // Estilo para el DiamondIcon en el header
+    width: 30, // Ajusta el tamaño según sea necesario
+    height: 30, // Ajusta el tamaño según sea necesario
   },
-  headerCenter: {
+  headerIcons: { // Nuevo estilo para los iconos de la derecha
     flexDirection: 'row',
     alignItems: 'center',
   },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'white',
-    marginLeft: 8,
+  profileIcon: {
+    marginRight: 15,
   },
-  headerRight: {
-    width: 30,
-  },
-  messagesContainer: {
-    padding: 16,
-    paddingBottom: 20,
-  },
-  messageContainer: {
-    marginBottom: 16,
-    maxWidth: '80%',
-  },
-  userMessage: {
-    alignSelf: 'flex-end',
-  },
-  aiMessage: {
-    alignSelf: 'flex-start',
-  },
-  messageBubble: {
-    borderRadius: 16,
-    padding: 12,
-  },
-  userBubble: {
-    backgroundColor: '#8942F5',
-    borderBottomRightRadius: 4,
-  },
-  aiBubble: {
-    backgroundColor: '#333',
-    borderBottomLeftRadius: 4,
-  },
-  messageText: {
-    fontSize: 15,
-    lineHeight: 20,
-  },
-  userText: {
-    color: 'white',
-  },
-  aiText: {
-    color: 'white',
-  },
-  timestamp: {
-    fontSize: 11,
-    color: '#999',
-    marginTop: 4,
-    alignSelf: 'flex-end',
-  },
-  typingContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-  },
-  typingBubble: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    alignSelf: 'flex-start',
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  typingText: {
-    fontSize: 13,
-    color: '#ccc',
-    marginLeft: 8,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#333',
-    backgroundColor: '#1B1B1B',
-  },
-  input: {
-    flex: 1,
-    backgroundColor: '#333',
-    borderRadius: 20,
-    paddingHorizontal: 16,
+  notificationIcon: {},
+  
+  // Estilos para Chats Recientes
+  recentChatsSection: {
+    flex: 1, // Permite que la sección de chats recientes ocupe todo el espacio restante
     paddingVertical: 10,
-    color: 'white',
-    maxHeight: 100,
+    backgroundColor: '#1B1B1B', // Fondo de la sección de chats
   },
-  sendButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#8942F5',
+  recentChatsList: {
+    paddingHorizontal: 16, // Mantener padding horizontal para la lista vertical
+    paddingBottom: 10,
+  },
+  recentChatItem: {
+    flexDirection: 'row', // Ahora los elementos están en fila
     alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 8,
+    marginBottom: 15, // Espacio entre elementos verticales (aumentado)
+    paddingVertical: 12, // Aumentado el padding vertical
+    paddingHorizontal: 15, // Aumentado el padding horizontal
+    backgroundColor: '#282828', // Fondo para cada chat reciente
+    borderRadius: 12, // Ligeramente más redondeado
   },
-  disabledSendButton: {
-    backgroundColor: '#444',
+  recentChatAvatar: {
+    width: 55, // Aumentado el tamaño del avatar
+    height: 55, // Aumentado el tamaño del avatar
+    borderRadius: 27.5, // Para hacer el avatar redondo
+    borderWidth: 2,
+    borderColor: '#00E5FF', // Borde de color para los avatares
+    marginRight: 15, // Espacio a la derecha del avatar
+  },
+  recentChatLogoContainer: { // Contenedor para el logo/diamante de ComersiumAI
+    width: 55,
+    height: 55,
+    borderRadius: 27.5,
+    borderWidth: 2,
+    borderColor: '#00E5FF',
+    marginRight: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#00E5FF', // Fondo para el logo/diamante, puedes ajustarlo
+    overflow: 'hidden', // Asegura que el contenido no se salga del contenedor redondo
+  },
+  recentChatDiamondIcon: { // Nuevo estilo para el tamaño del DiamondIcon dentro del contenedor
+    width: 35, // Ajusta el tamaño del diamante para que se vea bien dentro del círculo
+    height: 35,
+  },
+  recentChatTextContent: {
+    flex: 1, // Permite que el contenido de texto ocupe el espacio restante
+  },
+  recentChatName: {
+    fontSize: 16, // Aumentado el tamaño de la fuente
+    color: 'white',
+    fontWeight: '600',
+  },
+  recentChatLastMessage: {
+    fontSize: 13, // Aumentado el tamaño de la fuente
+    color: '#999',
+    marginTop: 4, // Ligeramente más espacio
   },
 });

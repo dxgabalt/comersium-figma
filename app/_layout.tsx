@@ -62,9 +62,8 @@ export default function RootLayout() {
         <Stack.Screen name="auth" />           
         <Stack.Screen name="chat" />           
         <Stack.Screen name="subscription" />   
-        {/* <Stack.Screen name="(main)" /> */} {/* <-- COMENTA O ELIMINA ESTA LÍNEA TEMPORALMENTE */}
-
-        <Stack.Screen name="+not-found" />
+        <Stack.Screen name="(main)" />       
+         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar />
     </ThemeProvider>

@@ -1,64 +1,81 @@
-// app/onboarding/OnboardingScreen3.tsx
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
-
 import Button from '../../components/Button';
-import ComersiumLogo from '../../components/ComersiumLogo';
-import ComersiumText from '../../components/ComersiumText';
+import InfoViewProps from '../types/InfoViewProps';
 
-import InfoViewProps from '../types/InfoViewProps'; // Asegúrate de que esta ruta sea correcta
+// Importación de la imagen de fondo específica para este onboarding
+import Onboarding3Image from '../../assets/images/Hamburgesa.png';
+// Importación del logo de la empresa para colocarlo sobre la imagen
+import ComersiumLogoImage from '../../assets/images/LogoEmpresa.png';
 
 const { width, height } = Dimensions.get('window');
 
-export default function OnboardingScreen3({ onNext, onSkip, isLastPage }: InfoViewProps) {
+interface OnboardingScreen3Props extends InfoViewProps {
+  currentPage: number;
+  totalPages: number;
+}
+
+export default function OnboardingScreen3({ onNext, onSkip, isLastPage, currentPage, totalPages }: OnboardingScreen3Props) {
   return (
     <View style={styles.innerContainer}>
       <StatusBar style="light" />
-      
-      <View style={styles.header}>
-        <ComersiumLogo size="small" color="white" />
-        <ComersiumText size="small" color="white" />
-      </View>
-      
-      <View style={styles.imageContainer}>
+
+      {/* La imagen principal con overlay y contenido superpuesto */}
+      <View style={styles.imageBackgroundContainer}>
         <Image
-          source={{ uri: 'https://api.a0.dev/assets/image?text=Bacon%20Burger&aspect=16:9' }}
-          style={styles.image}
+          source={Onboarding3Image}
+          style={styles.backgroundImage}
           resizeMode="cover"
         />
         <View style={styles.overlay} />
+
+        {/* Contenido flotante sobre la imagen: Logo y Paginación */}
+        <View style={styles.imageContentOverlay}>
+          <Image
+            source={ComersiumLogoImage}
+            style={styles.comersiumBottomLogo}
+            resizeMode="contain"
+          />
+          <View style={styles.paginationDots}>
+            {[...Array(totalPages)].map((_, index) => (
+              <View
+                key={index}
+                style={[styles.dot, index === currentPage && styles.activeDot]}
+              />
+            ))}
+          </View>
+        </View>
       </View>
-      
+
+      {/* Contenido de texto y botones */}
       <View style={styles.content}>
         <Text style={styles.title}>Todo en un mismo lugar,</Text>
         <Text style={styles.subtitle}>promociones todos los días</Text>
-        
+
         <View style={styles.buttonContainer}>
-          <Button 
-            title="Comenzar" 
-            onPress={onNext} 
-            variant="primary" 
+          <Button
+            title="Comenzar"
+            onPress={onNext}
+            variant="primary"
             style={styles.primaryButton}
           />
-          
-          <Button 
-            title="Inicio de Sesión Comercial" 
-            onPress={onSkip} 
-            variant="secondary" 
+
+          <Button
+            title="Inicio de Sesión Comercial"
+            onPress={onSkip}
+            variant="secondary"
             style={styles.secondaryButton}
           />
-          
-          {!isLastPage && (
-            <Button
-              title="OMITIR ESTE PASO"
-              onPress={onSkip}
-              variant="text"
-              style={styles.skipButton}
-            />
-          )}
+
+          <Button
+            title="Solicitar información"
+            onPress={onSkip}
+            variant="text"
+            style={styles.textButton}
+          />
         </View>
-        
+
         <Text style={styles.copyright}>Copyright 2025</Text>
       </View>
     </View>
@@ -71,38 +88,60 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 20,
-    paddingBottom: 10,
-    gap: 10,
-  },
-  imageContainer: {
+  imageBackgroundContainer: {
     width: width,
-    height: height * 0.5,
+    height: height * 0.55,
     position: 'relative',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
-  image: {
+  backgroundImage: {
     width: '100%',
     height: '100%',
+    position: 'absolute',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
+  imageContentOverlay: {
+    alignItems: 'center',
+    marginBottom: 20,
+    zIndex: 1,
+  },
+  comersiumBottomLogo: {
+    width: 120,
+    height: 120,
+    marginBottom: 10,
+  },
+  paginationDots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 0,
+  },
+  dot: {
+    height: 8,
+    width: 8,
+    borderRadius: 4,
+    backgroundColor: '#888',
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: 'white',
+  },
   content: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 30,
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
+    marginBottom: 10,
   },
   subtitle: {
     fontSize: 22,
@@ -114,20 +153,29 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '100%',
     alignItems: 'center',
-    gap: 10,
+    gap: 15,
+    marginBottom: 20,
   },
   primaryButton: {
-    width: '100%',
+    width: '90%',
+    maxWidth: 350,
   },
   secondaryButton: {
-    width: '100%',
+    width: '90%',
+    maxWidth: 350,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderWidth: 1,
     borderColor: '#333',
   },
-  skipButton: {
+  textButton: {
     marginTop: 5,
-    width: '100%',
+    borderWidth: 1,
+    borderColor: '#333',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    width: '90%',
+    maxWidth: 350,
   },
   copyright: {
     color: '#555',

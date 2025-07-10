@@ -1,70 +1,76 @@
-// app/onboarding/OnboardingScreen1.tsx
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'; // Importa Dimensions
-// import { useNavigation } from '@react-navigation/native'; // <-- ELIMINADO: Ya no se usa useNavigation aquí
-// import { LinearGradient } from 'expo-linear-gradient'; // No estaba en el original, no se añade
-import Button from '../../components/Button'; // Ajusta la ruta si es necesario
-import ComersiumLogo from '../../components/ComersiumLogo'; // Ajusta la ruta si es necesario
-import ComersiumText from '../../components/ComersiumText'; // Ajusta la ruta si es necesario
-
-// Importa la interfaz de tipos desde InfoViewProps (o donde la tengas definida)
-// Asegúrate de que esta ruta sea correcta
+import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
+import Button from '../../components/Button';
 import InfoViewProps from '../types/InfoViewProps';
+
+import ComersiumLogoImage from '../../assets/images/LogoEmpresa.png';
+import Onboarding1Image from '../../assets/images/Onboarding1.png';
 
 const { width, height } = Dimensions.get('window');
 
-export default function OnboardingScreen1({ onNext, onSkip, isLastPage }: InfoViewProps) {
+interface OnboardingScreen1Props extends InfoViewProps {
+  currentPage: number;
+  totalPages: number;
+}
 
+export default function OnboardingScreen1({ onNext, onSkip, isLastPage, currentPage, totalPages }: OnboardingScreen1Props) {
   return (
-    <View style={styles.innerContainer}> 
+    <View style={styles.innerContainer}>
       <StatusBar style="light" />
-      
-      {/* Header con logo */}
-      <View style={styles.header}>
-        <ComersiumLogo size="small" color="white" />
-        <ComersiumText size="small" color="white" />
-      </View>
-      
-      {/* Imagen principal */}
-      <View style={styles.imageContainer}>
+
+      <View style={styles.imageBackgroundContainer}>
         <Image
-          source={{ uri: 'https://api.a0.dev/assets/image?text=Shopping%20Mall&aspect=16:9' }}
-          style={styles.image}
+          source={Onboarding1Image}
+          style={styles.backgroundImage}
           resizeMode="cover"
         />
         <View style={styles.overlay} />
+
+        <View style={styles.imageContentOverlay}>
+          <Image
+            source={ComersiumLogoImage}
+            style={styles.comersiumBottomLogo}
+            resizeMode="contain"
+          />
+          <View style={styles.paginationDots}>
+            {[...Array(totalPages)].map((_, index) => (
+              <View
+                key={index}
+                style={[styles.dot, index === currentPage && styles.activeDot]}
+              />
+            ))}
+          </View>
+        </View>
       </View>
-      
-      {/* Contenido */}
+
       <View style={styles.content}>
-        
         <Text style={styles.title}>Todo en un mismo lugar,</Text>
         <Text style={styles.subtitle}>promociones todos los días</Text>
-        
+
         <View style={styles.buttonContainer}>
-          <Button 
-            title="Comenzar" 
-            onPress={onNext} // Llama a la función onNext pasada por props
-            variant="primary" 
+          <Button
+            title="Comenzar"
+            onPress={onNext}
+            variant="primary"
             style={styles.primaryButton}
           />
-          
-          <Button 
-            title="Inicio de Sesión Comercial" 
-            onPress={onSkip} // Llama a onSkip para salir del onboarding
-            variant="secondary" 
+
+          <Button
+            title="Inicio de Sesión Comercial"
+            onPress={onSkip}
+            variant="secondary"
             style={styles.secondaryButton}
           />
-          
-          <Button 
-            title="Solicitar información" 
-            onPress={onSkip} // Llama a onSkip para salir del onboarding
-            variant="text" 
+
+          <Button
+            title="Solicitar información"
+            onPress={onSkip}
+            variant="text"
             style={styles.textButton}
           />
         </View>
-        
+
         <Text style={styles.copyright}>Copyright 2025</Text>
       </View>
     </View>
@@ -72,48 +78,65 @@ export default function OnboardingScreen1({ onNext, onSkip, isLastPage }: InfoVi
 }
 
 const styles = StyleSheet.create({
-  // ESTE ESTILO ES CRUCIAL PARA EL PAGERVIEW
   innerContainer: {
-    width: width, // Cada vista ocupa el 100% del ancho de la pantalla
-    flex: 1,      // Y se expande verticalmente
-    backgroundColor: '#000000', // Mantiene el fondo original
+    width: width,
+    flex: 1,
+    backgroundColor: '#000000',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 20,
-    paddingBottom: 10,
-    gap: 10,
-  },
-  imageContainer: {
-    width: width, // Asegura que la imagen ocupe el ancho completo
-    height: height * 0.5,
+  imageBackgroundContainer: {
+    width: width,
+    height: height * 0.55,
     position: 'relative',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
-  image: {
+  backgroundImage: {
     width: '100%',
     height: '100%',
+    position: 'absolute',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
+  imageContentOverlay: {
+    alignItems: 'center',
+    marginBottom: 20,
+    zIndex: 1,
+  },
+  comersiumBottomLogo: {
+    width: 120,
+    height: 120,
+    marginBottom: 10,
+  },
+  paginationDots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 0,
+  },
+  dot: {
+    height: 8,
+    width: 8,
+    borderRadius: 4,
+    backgroundColor: '#888',
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: 'white',
+  },
   content: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 30,
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  // Paginación: ELIMINADA DE AQUÍ
-  // pagination: { ... },
-  // paginationDot: { ... },
-  // activeDot: { ... },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
+    marginBottom: 10,
   },
   subtitle: {
     fontSize: 22,
@@ -125,19 +148,29 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '100%',
     alignItems: 'center',
-    gap: 10,
+    gap: 15,
+    marginBottom: 20,
   },
   primaryButton: {
-    width: '100%',
+    width: '90%',
+    maxWidth: 350,
   },
   secondaryButton: {
-    width: '100%',
+    width: '90%',
+    maxWidth: 350,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderWidth: 1,
     borderColor: '#333',
   },
   textButton: {
     marginTop: 5,
+    borderWidth: 1,
+    borderColor: '#333',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    width: '90%',
+    maxWidth: 350,
   },
   copyright: {
     color: '#555',

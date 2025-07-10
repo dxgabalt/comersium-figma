@@ -7,9 +7,8 @@ import Button from '../../components/Button';
 import InfoViewProps from '../types/InfoViewProps';
 
 import ComersiumLogoImage from '../../assets/images/LogoEmpresa.png';
-// --- IMPORTACIÓN DE LA NUEVA IMAGEN DE FONDO LOCAL ---
+
 import NewBackgroundImage from '../../assets/images/PersonaReunida.png';
-// --- FIN IMPORTACIÓN DE IMAGEN ---
 
 const { width } = Dimensions.get('window');
 

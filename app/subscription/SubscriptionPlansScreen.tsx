@@ -1,59 +1,62 @@
-import { Ionicons } from '@expo/vector-icons';
+// SubscriptionPlansScreen.tsx
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ComersiumLogo from '../../components/ComersiumLogo';
-import ComersiumText from '../../components/ComersiumText';
+import { Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import ComersiumLogoImage from '../../assets/images/LogoEmpresa.png';
+import CardBackgroundImage from '../../assets/images/Tarjeta.png';
 
 interface PlanProps {
   title: string;
   price: string;
-  features: string[];
   isPremium?: boolean;
   isStandard?: boolean;
 }
 
-const Plan: React.FC<PlanProps> = ({ title, price, features, isPremium, isStandard }) => {
-  const iconColor = isPremium ? '#00E5FF' : isStandard ? '#FFFFFF' : '#00E5FF';
-  const iconBgColor = isPremium ? '#0D47A1' : isStandard ? '#333' : '#333';
-  const iconName = isPremium ? 'crown' : 'sparkles';
-  
+const Plan: React.FC<PlanProps> = ({ title, price, isPremium, isStandard }) => {
+  const navigation = useNavigation();
+
+  let titleColor = '#FFFFFF';
+  let priceColor = '#BBBBBB';
+  let detailsScreenName = 'PlanDetailsBasicScreen'; // Nombre de archivo dentro de la misma carpeta
+
+  if (isStandard) {
+    titleColor = '#FFD700';
+    priceColor = '#FFEA00';
+    detailsScreenName = 'PlanDetailsStandardScreen';
+  } else if (isPremium) {
+    titleColor = '#00E5FF';
+    priceColor = '#00EAFF';
+    detailsScreenName = 'PlanDetailsPremiumScreen';
+  }
+
+  const handleViewDetails = () => {
+    navigation.navigate(detailsScreenName as never);
+  };
+
   return (
-    <View style={[styles.planCard, isPremium && styles.premiumCard]}>
-      <View style={[styles.iconContainer, { backgroundColor: iconBgColor }]}>
-        <Ionicons name={iconName} size={20} color={iconColor} />
-      </View>
-      
-      <View style={styles.planHeader}>
-        <Text style={[styles.planTitle, isPremium && styles.premiumText]}>{title}</Text>
-        <Text style={[styles.planPrice, isPremium && styles.premiumText]}>{price}</Text>
-      </View>
-      
-      <View style={styles.featuresContainer}>
-        {features.map((feature, index) => (
-          <View key={index} style={styles.featureRow}>
-            <Ionicons 
-              name="checkmark-circle" 
-              size={18} 
-              color={isPremium ? '#00E5FF' : '#FFFFFF'} 
-            />
-            <Text style={[styles.featureText, isPremium && styles.premiumText]}>{feature}</Text>
-          </View>
-        ))}
-      </View>
+    <View style={styles.planCardContainer}>
+      <ImageBackground
+        source={CardBackgroundImage}
+        style={styles.planCardBackground}
+        imageStyle={styles.planCardImageStyle}
+      >
+        <View style={styles.centeredContent}>
+          <Text style={[styles.planTitle, { color: titleColor }]}>{title}</Text>
+          <Text style={[styles.planPrice, { color: priceColor }]}>{price}</Text>
+        </View>
+
+        <TouchableOpacity onPress={handleViewDetails} style={styles.subtleDetailsButton}>
+          <Text style={styles.subtleDetailsButtonText}>Ver detalles del plan</Text>
+        </TouchableOpacity>
+      </ImageBackground>
     </View>
   );
 };
 
 export default function SubscriptionPlansScreen() {
-  const navigation = useNavigation();
-
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
-
   return (
     <LinearGradient
       colors={['#121212', '#1E1E1E']}
@@ -62,58 +65,33 @@ export default function SubscriptionPlansScreen() {
       end={{ x: 0, y: 1 }}
     >
       <StatusBar style="light" />
-      
+
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        
-        <View style={styles.logoContainer}>
-          <ComersiumLogo size="small" color="white" />
-          <ComersiumText size="small" color="white" />
-        </View>
-        
-        <View style={styles.rightHeader}>
-          <TouchableOpacity>
-            <Ionicons name="person-circle-outline" size={24} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.notificationIcon}>
-            <Ionicons name="notifications-outline" size={24} color="white" />
-          </TouchableOpacity>
+        <View style={styles.headerLogoContainer}>
+          <Image
+            source={ComersiumLogoImage}
+            style={styles.headerLogo}
+            resizeMode="contain"
+          />
         </View>
       </View>
-      
+
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
-          <Plan 
-            title="Básico" 
+          <Plan
+            title="Básico"
             price="$25/Mes"
-            features={[
-              "Descuento fijo en cada pedido",
-              "Acceso a promociones exclusivas para suscriptores",
-              "Notificaciones prioritarias sobre ofertas y descuentos"
-            ]}
           />
-          
-          <Plan 
-            title="Estandar" 
+
+          <Plan
+            title="Estándar"
             price="$45/Mes"
-            features={[
-              "Descuento fijo en cada pedido",
-              "Acceso a promociones exclusivas para suscriptores",
-              "Notificaciones prioritarias sobre ofertas y descuentos"
-            ]}
             isStandard
           />
-          
-          <Plan 
-            title="Premium" 
+
+          <Plan
+            title="Premium"
             price="$70/Mes"
-            features={[
-              "Descuento fijo en cada pedido",
-              "Acceso a promociones exclusivas para suscriptores",
-              "Notificaciones prioritarias sobre ofertas y descuentos"
-            ]}
             isPremium
           />
         </View>
@@ -127,32 +105,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingTop: 40,
     paddingBottom: 10,
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  headerLogoContainer: {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-  },
-  rightHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  notificationIcon: {
-    marginLeft: 15,
+  headerLogo: {
+    width: 100,
+    height: 40,
   },
   scrollView: {
     flex: 1,
@@ -161,55 +125,53 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 20,
   },
-  planCard: {
-    backgroundColor: '#1B1B1B',
+  planCardContainer: {
+    marginBottom: 25,
     borderRadius: 15,
-    padding: 20,
-    marginBottom: 20,
+    overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: 'rgba(255,255,255,0.1)',
+    height: 150,
   },
-  premiumCard: {
-    backgroundColor: '#0D2A4A',
-    borderColor: '#00E5FF',
-  },
-  iconContainer: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#333',
+  planCardBackground: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
   },
-  planHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  planCardImageStyle: {
+    borderRadius: 15,
+  },
+  centeredContent: {
     alignItems: 'center',
-    marginBottom: 15,
   },
   planTitle: {
-    fontSize: 20,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: 'white',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
   },
   planPrice: {
-    fontSize: 16,
-    color: 'white',
+    fontSize: 22,
+    marginTop: 5,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
   },
-  premiumText: {
-    color: '#00E5FF',
+  subtleDetailsButton: {
+    position: 'absolute',
+    bottom: 15,
+    alignSelf: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
   },
-  featuresContainer: {
-    gap: 10,
-  },
-  featureRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  featureText: {
+  subtleDetailsButtonText: {
+    color: 'rgba(255,255,255,0.8)',
     fontSize: 14,
-    color: 'white',
+    fontWeight: '600',
   },
 });

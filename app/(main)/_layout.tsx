@@ -1,0 +1,21 @@
+import { Stack } from "expo-router";
+import React from "react";
+
+export default function MainLayout() {
+  
+  return (
+
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+        <Stack.Screen name="HomeScreen" />           
+        <Stack.Screen name="CategoriesScreen" />     
+        <Stack.Screen name="CheckoutScreen" />           
+        <Stack.Screen name="LogoWallScreen" />           
+      </Stack>
+
+
+  );
+}

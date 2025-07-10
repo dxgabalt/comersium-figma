@@ -1,31 +1,36 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import ComersiumLogo from '../../components/ComersiumLogo';
-import ComersiumText from '../../components/ComersiumText';
+import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
+import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Button from '../../components/Button';
 
-const { width } = Dimensions.get('window');
+import ComersiumLogoImage from '../../assets/images/LogoEmpresa.png';
+
+Dimensions.get('window');
 
 export default function LoginScreen() {
   const navigation = useNavigation();
-  const [activeTab, setActiveTab] = useState('register'); // 'register' o 'login'
+  const [activeTab, setActiveTab] = useState('register');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [videoLink, setVideoLink] = useState('');
-  const [phone, setPhone] = useState('');
-  const [location, setLocation] = useState('');
-  const [description, setDescription] = useState('');
-  const [keywords, setKeywords] = useState('');
-  const [facebookLink, setFacebookLink] = useState('');
+  const [password, setPassword] = useState('');
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   const handleRegister = () => {
+    if (!agreeToTerms) {
+      console.log('Debe aceptar los términos y condiciones');
+      return;
+    }
+    console.log('Registrando con:', { firstName, lastName, email, password, agreeToTerms });
     navigation.navigate('PrivacyPolicy' as never);
   };
 
   const handleLogin = () => {
-    navigation.navigate('Categories' as never);
+    console.log('Iniciando sesión con:', { email, password });
+    // CORRECCIÓN AQUÍ: El nombre de la ruta debe ser 'subscription'
+    navigation.navigate('(main)' as never);
   };
 
   return (
@@ -36,35 +41,51 @@ export default function LoginScreen() {
       end={{ x: 0, y: 1 }}
     >
       <StatusBar style="light" />
-      
-      {/* Header con logo */}
-      <View style={styles.header}>
-        <ComersiumLogo size="small" color="white" />
+
+      <View style={styles.topLogoContainer}>
+        <Image
+          source={ComersiumLogoImage}
+          style={styles.topLogo}
+          resizeMode="contain"
+        />
       </View>
-      
-      {/* Contenido */}
+
       <View style={styles.content}>
         <View style={styles.card}>
-          {/* Tabs */}
           <View style={styles.tabContainer}>
-            <TouchableOpacity 
-              style={[styles.tab, activeTab === 'register' && styles.activeTab]} 
+            <TouchableOpacity
+              style={[styles.tab, activeTab === 'register' && styles.activeTab]}
               onPress={() => setActiveTab('register')}
             >
-              <Text style={[styles.tabText, activeTab === 'register' && styles.activeTabText]}>Resgístrate</Text>
+              <Text style={[styles.tabText, activeTab === 'register' && styles.activeTabText]}>Regístrate</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.tab, activeTab === 'login' && styles.activeTab]} 
+            <TouchableOpacity
+              style={[styles.tab, activeTab === 'login' && styles.activeTab]}
               onPress={() => setActiveTab('login')}
             >
               <Text style={[styles.tabText, activeTab === 'login' && styles.activeTabText]}>Entrar</Text>
             </TouchableOpacity>
           </View>
-          
-          {/* Formulario */}
+
           <View style={styles.formContainer}>
             {activeTab === 'register' ? (
               <>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Nombre"
+                  placeholderTextColor="#777"
+                  value={firstName}
+                  onChangeText={setFirstName}
+                  autoCapitalize="words"
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Apellidos"
+                  placeholderTextColor="#777"
+                  value={lastName}
+                  onChangeText={setLastName}
+                  autoCapitalize="words"
+                />
                 <TextInput
                   style={styles.input}
                   placeholder="Email"
@@ -74,63 +95,44 @@ export default function LoginScreen() {
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
-                
                 <TextInput
                   style={styles.input}
-                  placeholder="Video Link"
+                  placeholder="Contraseña"
                   placeholderTextColor="#777"
-                  value={videoLink}
-                  onChangeText={setVideoLink}
-                  autoCapitalize="none"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
                 />
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="Número de Celular"
-                  placeholderTextColor="#777"
-                  value={phone}
-                  onChangeText={setPhone}
-                  keyboardType="phone-pad"
-                />
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="Dirección - Ubicación"
-                  placeholderTextColor="#777"
-                  value={location}
-                  onChangeText={setLocation}
-                />
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="Descripción"
-                  placeholderTextColor="#777"
-                  value={description}
-                  onChangeText={setDescription}
-                  multiline
-                />
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="Palabras clave - SEO"
-                  placeholderTextColor="#777"
-                  value={keywords}
-                  onChangeText={setKeywords}
-                />
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="Link de facebook"
-                  placeholderTextColor="#777"
-                  value={facebookLink}
-                  onChangeText={setFacebookLink}
-                  autoCapitalize="none"
-                />
-                
-                <Button 
-                  title="Registrarse" 
-                  onPress={handleRegister} 
-                  variant="primary" 
+
+                <TouchableOpacity
+                  style={styles.termsCheckboxContainer}
+                  onPress={() => setAgreeToTerms(!agreeToTerms)}
+                >
+                  <View style={[styles.checkbox, agreeToTerms && styles.checkboxActive]}>
+                    {agreeToTerms && <Text style={styles.checkboxTick}>✓</Text>}
+                  </View>
+                  <Text style={styles.termsText}>Acepto los Términos y Condiciones</Text>
+                </TouchableOpacity>
+
+                <View style={styles.separatorContainer}>
+                  <View style={styles.separatorLine} />
+                  <Text style={styles.separatorText}>o</Text>
+                  <View style={styles.separatorLine} />
+                </View>
+
+                <View style={styles.socialIconsContainer}>
+                  <TouchableOpacity style={styles.socialIcon}>
+                    <Text style={styles.socialIconText}>G</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.socialIcon}>
+                    <Text style={styles.socialIconText}>f</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <Button
+                  title="Registrarse"
+                  onPress={handleRegister}
+                  variant="primary"
                   style={styles.button}
                 />
               </>
@@ -145,24 +147,39 @@ export default function LoginScreen() {
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
-                
+
                 <TextInput
                   style={styles.input}
                   placeholder="Contraseña"
                   placeholderTextColor="#777"
                   secureTextEntry
                 />
-                
-                <Button 
-                  title="Iniciar Sesión" 
-                  onPress={handleLogin} 
-                  variant="primary" 
+
+                <Button
+                  title="Iniciar Sesión"
+                  onPress={handleLogin}
+                  variant="primary"
                   style={styles.button}
                 />
-                
+
                 <TouchableOpacity style={styles.forgotPassword}>
                   <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
                 </TouchableOpacity>
+
+                <View style={styles.separatorContainer}>
+                  <View style={styles.separatorLine} />
+                  <Text style={styles.separatorText}>o</Text>
+                  <View style={styles.separatorLine} />
+                </View>
+
+                <View style={styles.socialIconsContainer}>
+                  <TouchableOpacity style={styles.socialIcon}>
+                    <Text style={styles.socialIconText}>G</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.socialIcon}>
+                    <Text style={styles.socialIconText}>f</Text>
+                  </TouchableOpacity>
+                </View>
               </>
             )}
           </View>
@@ -175,26 +192,32 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  topLogoContainer: {
+    width: '100%',
+    alignItems: 'center',
     paddingTop: 40,
     paddingBottom: 20,
-    gap: 10,
+  },
+  topLogo: {
+    width: 150,
+    height: 150,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
+    width: '90%',
+    maxWidth: 400,
+    justifyContent: 'center',
   },
   card: {
-    flex: 1,
     padding: 20,
     backgroundColor: '#0D0D0D',
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#00E5FF',
+    flexGrow: 1,
   },
   tabContainer: {
     flexDirection: 'row',
@@ -202,6 +225,8 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     marginBottom: 20,
     padding: 4,
+    borderWidth: 1,
+    borderColor: '#333',
   },
   tab: {
     flex: 1,
@@ -231,6 +256,71 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: '#333',
+  },
+  termsCheckboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingHorizontal: 5,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: '#00E5FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    backgroundColor: 'transparent',
+  },
+  checkboxActive: {
+    backgroundColor: '#00E5FF',
+  },
+  checkboxTick: {
+    color: '#0D0D0D',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  termsText: {
+    color: '#ccc',
+    fontSize: 14,
+  },
+  separatorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  separatorLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#333',
+  },
+  separatorText: {
+    color: '#777',
+    marginHorizontal: 10,
+    fontSize: 16,
+  },
+  socialIconsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 20,
+    gap: 20,
+  },
+  socialIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#1B1B1B',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  socialIconText: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   button: {
     marginTop: 10,
