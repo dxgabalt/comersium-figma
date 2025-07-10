@@ -15,7 +15,7 @@ interface UserBenefitsScreenProps extends InfoViewProps {
   totalPages: number;
 }
 
-export default function UserBenefitsScreen({ onNext, onSkip, isLastPage, currentPage, totalPages }: UserBenefitsScreenProps) {
+export default function UserBenefitsScreen({ onSkip, currentPage, totalPages }: UserBenefitsScreenProps) {
   return (
     <View style={styles.innerContainer}>
       <StatusBar style="light" />

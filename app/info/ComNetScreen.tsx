@@ -1,67 +1,67 @@
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Dimensions, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 import Button from '../../components/Button';
-import ComersiumLogo from '../../components/ComersiumLogo';
-import InfoViewProps from '../types/InfoViewProps';
+
+import InfoViewProps from '../types/InfoViewProps'; // Asegúrate de que la ruta sea correcta
+
+import ComersiumLogoImage from '../../assets/images/LogoEmpresa.png';
+import MneImage from '../../assets/images/mne.png';
 
 const { width } = Dimensions.get('window');
 
-export default function ComNetScreen({ onNext, onSkip, isLastPage }: InfoViewProps) {
 
+export default function MneInfoScreen({ onNext, onSkip, isLastPage }: InfoViewProps) {
   return (
-    // El contenedor principal de esta vista, ocupando todo el ancho de la pantalla
     <View style={styles.innerContainer}>
       <StatusBar style="light" />
 
       <View style={styles.header}>
-        <View style={styles.profileContainer}>
+        <View style={styles.rightIconsContainer}>
           <TouchableOpacity>
             <View style={styles.profileIcon}>
-              <Text style={styles.profileText}>👤</Text>
+              <Text style={styles.iconText}>👤</Text>
             </View>
           </TouchableOpacity>
-        </View>
 
-        <View style={styles.logoContainer}>
-          <ComersiumLogo size="small" color="white" />
-        </View>
-
-        <View style={styles.notificationContainer}>
           <TouchableOpacity>
             <View style={styles.notificationIcon}>
-              <Text style={styles.notificationText}>🔔</Text>
+              <Text style={styles.iconText}>🔔</Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContentContainer}
+      >
         <View style={styles.content}>
-          <ComersiumLogo size="large" color="white" />
 
-          <Text style={styles.title}>ComNet</Text>
-
-          <Text style={styles.description}>
-            El cerebro de COMERSIUM, robusto, potente y seguro. Que genera resultados a cualquier necesidad.
-          </Text>
-
-          {/* El botón ahora llama a onNext y su título se adapta */}
-          <Button
-            title={isLastPage ? "FINALIZAR INFORMACIÓN" : "CONTINUAR"}
-            onPress={onNext}
-            variant="primary"
-            style={styles.button}
+          <Image
+            source={ComersiumLogoImage}
+            style={styles.mainComersiumLogo}
+            resizeMode="contain"
           />
 
-          {/* Botón para omitir el flujo, solo visible si no es la última página */}
-          {!isLastPage && (
-            <Button
-              title="OMITIR ESTA INFORMACIÓN"
-              onPress={onSkip}
-              variant="secondary" // Asumiendo que tienes un estilo 'secondary'
-              style={styles.skipButton}
-            />
-          )}
+          <Image
+            source={MneImage}
+            style={styles.mneImage}
+            resizeMode="contain"
+          />
+
+          <Text style={styles.description}>
+            Con MNE, gestiona tus tareas y proyectos de forma eficiente y centralizada.
+          </Text>
+
+          <Button
+            title="VOLVER AL INICIO"
+            onPress={onSkip}
+            variant="primary"
+            style={styles.singleButton}
+          />
         </View>
       </ScrollView>
     </View>
@@ -69,66 +69,65 @@ export default function ComNetScreen({ onNext, onSkip, isLastPage }: InfoViewPro
 }
 
 const styles = StyleSheet.create({
-  // Contenedor principal de esta vista, crucial para el ScrollView paginado
   innerContainer: {
-    width: width, // Asegura que esta vista ocupe el 100% del ancho de la pantalla
-    flex: 1, // Permite que el contenido se expanda verticalmente
+    width: width,
+    flex: 1,
+    backgroundColor: '#000', // Fondo oscuro
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end', // Iconos a la derecha
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 40,
     paddingBottom: 20,
   },
-  profileContainer: {
-    width: 40,
+  rightIconsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   profileIcon: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  profileText: {
-    fontSize: 20,
-  },
-  logoContainer: {
-    alignItems: 'center',
-  },
-  notificationContainer: {
-    width: 40,
-    alignItems: 'flex-end',
+    marginRight: 10,
   },
   notificationIcon: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  notificationText: {
+  iconText: {
     fontSize: 20,
+    color: 'white', // Color de los iconos
   },
   scrollView: {
     flex: 1,
+  },
+  scrollContentContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
   content: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
-    paddingTop: 60,
+    width: '100%',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-    marginTop: 30,
+  mainComersiumLogo: {
+    width: 200,
+    height: 200,
+    marginBottom: 30,
+  },
+  mneImage: {
+    width: 250,
+    height: 100, 
     marginBottom: 20,
   },
   description: {
@@ -137,13 +136,13 @@ const styles = StyleSheet.create({
     color: '#ccc',
     textAlign: 'center',
     marginBottom: 60,
+    paddingHorizontal: 20,
+    maxWidth: 600,
   },
-  button: {
-    width: '100%',
+  singleButton: {
     marginTop: 20,
-  },
-  skipButton: {
-    width: '100%',
-    marginTop: 10,
+    marginBottom: 20,
+    width: '90%',
+    maxWidth: 300,
   },
 });

@@ -16,6 +16,7 @@ import ComUserScreen from './ComUserScreen';
 import ForMerchantsScreen from './ForMerchantsScreen';
 import ForUsersScreen from './ForUsersScreen';
 import LogoWallInfoScreen from './LogoWallInfoScreen';
+import TermsAndConditionsScreen from './TermsAndConditions';
 import UserBenefitsScreen from './UserBenefitsScreen';
 import WhatIsComersiumScreen from './WhatIsComersiumScreen';
 
@@ -27,7 +28,7 @@ interface ExtendedInfoViewProps extends InfoViewProps {
   totalPages: number;
 }
 
-type InfoPageComponent = React.ComponentType<ExtendedInfoViewProps>; // Usamos la interfaz extendida
+type InfoPageComponent = React.ComponentType<ExtendedInfoViewProps>;
 
 export default function InfoFlowScreen() {
   const pagerRef = useRef<PagerView>(null);
@@ -43,6 +44,7 @@ export default function InfoFlowScreen() {
     ComUserScreen,
     ComNetScreen,
     AIScreen,
+    TermsAndConditionsScreen
   ];
   const totalPages = pages.length;
 
@@ -89,21 +91,6 @@ export default function InfoFlowScreen() {
         ))}
       </PagerView>
 
-      {/* --- ELIMINAMOS ESTA SECCIÓN DE PAGINACIÓN DE AQUÍ ---
-      <View style={styles.paginationContainer}>
-        <View style={styles.paginationDots}>
-          {pages.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.paginationDot,
-                currentPage === index && styles.activeDot,
-              ]}
-            />
-          ))}
-        </View>
-      </View>
-      --- FIN DE ELIMINACIÓN --- */}
     </LinearGradient>
   );
 }

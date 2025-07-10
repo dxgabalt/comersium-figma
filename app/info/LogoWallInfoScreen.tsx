@@ -7,6 +7,7 @@ import Button from '../../components/Button';
 import InfoViewProps from '../types/InfoViewProps';
 
 import ComersiumLogoImage from '../../assets/images/LogoEmpresa.png';
+import LogowallPNG from '../../assets/images/Logowa.png';
 
 const { width } = Dimensions.get('window');
 
@@ -48,7 +49,12 @@ export default function LogoWallInfoScreen({ onNext, onSkip, isLastPage, current
             resizeMode="contain"
           />
 
-          <Text style={styles.title}>Logowall</Text>
+          {/* ¡Ahora usando el componente Image para el PNG! */}
+          <Image
+            source={LogowallPNG}
+            style={styles.logowallImage} // Nuevo estilo para el PNG
+            resizeMode="contain"
+          />
 
           <Text style={styles.description}>
             La innovadora forma de mostrarte el universo de marcas que existen a tu alrededor.
@@ -74,7 +80,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'flex-end', // Alinea los iconos a la derecha
+    justifyContent: 'flex-end',
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 40,
@@ -90,7 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10, // Espacio entre el perfil y la campana
+    marginRight: 10,
   },
   notificationIcon: {
     width: 30,
@@ -101,33 +107,37 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 20,
-    color: 'white', // Asegura que los emojis sean visibles
+    color: 'white',
   },
   scrollView: {
     flex: 1,
   },
   scrollContentContainer: {
     flexGrow: 1,
-    justifyContent: 'center', // Centra el contenido verticalmente
+    justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
   content: {
-    flex: 1, // Permite que el contenido ocupe el espacio disponible
-    alignItems: 'center', // Centra el contenido horizontalmente
-    justifyContent: 'center', // Centra el contenido verticalmente dentro de sí mismo
-    width: '100%', // Ocupa todo el ancho disponible
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
   },
   mainComersiumLogo: {
-    width: 200, // Ajusta el tamaño de tu logo principal
-    height: 200, // Ajusta el tamaño de tu logo principal
-    marginBottom: 30, // Espacio entre el logo y el título
+    width: 200,
+    height: 200,
+    marginBottom: 30,
+  },
+  logowallImage: { // <-- ¡Nuevo estilo para el PNG!
+    width: 250, // Ajusta el ancho según necesites
+    height: 100, // Ajusta el alto según necesites
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: 20,
     textAlign: 'center',
   },
   description: {
@@ -135,9 +145,9 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: '#ccc',
     textAlign: 'center',
-    marginBottom: 60, // Espacio antes del botón
-    paddingHorizontal: 20, // Para evitar que el texto se pegue a los bordes
-    maxWidth: 600, // Limita el ancho del texto en pantallas grandes
+    marginBottom: 60,
+    paddingHorizontal: 20,
+    maxWidth: 600,
   },
   singleButton: {
     marginTop: 20,

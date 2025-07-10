@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Button from '../../components/Button';
-import ComersiumLogo from '../../components/ComersiumLogo';
 
-import InfoViewProps from '../types/InfoViewProps'; // Asegúrate de que la ruta sea correcta
+import InfoViewProps from '../types/InfoViewProps';
+
+import ComUserImage from '../../assets/images/COMUSE.png';
+import ComersiumLogoImage from '../../assets/images/LogoEmpresa.png';
 
 const { width } = Dimensions.get('window');
 
@@ -15,52 +17,52 @@ export default function ComUserScreen({ onNext, onSkip, isLastPage }: InfoViewPr
       <StatusBar style="light" />
 
       <View style={styles.header}>
-        <View style={styles.profileContainer}>
+        <View style={styles.rightIconsContainer}>
           <TouchableOpacity>
             <View style={styles.profileIcon}>
-              <Text style={styles.profileText}>👤</Text>
+              <Text style={styles.iconText}>👤</Text>
             </View>
           </TouchableOpacity>
-        </View>
 
-        <View style={styles.logoContainer}>
-          <ComersiumLogo size="small" color="white" />
-        </View>
-
-        <View style={styles.notificationContainer}>
           <TouchableOpacity>
             <View style={styles.notificationIcon}>
-              <Text style={styles.notificationText}>🔔</Text>
+              <Text style={styles.iconText}>🔔</Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContentContainer}
+      >
         <View style={styles.content}>
-          <ComersiumLogo size="large" color="white" />
+          {/* Se reemplaza el ComersiumLogo por una Image, usando el mismo ComersiumLogoImage o el que prefieras como logo principal */}
+          <Image
+            source={ComersiumLogoImage}
+            style={styles.mainComersiumLogo}
+            resizeMode="contain"
+          />
 
-          <Text style={styles.title}>ComUser+</Text>
+          {/* Imagen específica de COMUSE.png */}
+          <Image
+            source={ComUserImage}
+            style={styles.comUserImage} // Estilo para la imagen COMUSE
+            resizeMode="contain"
+          />
 
           <Text style={styles.description}>
             Nuestro asistente exclusivo para que obtengas el mayor rendimiento a tu tiempo y necesidades.
           </Text>
 
+          {/* Un solo botón "VOLVER AL INICIO" */}
           <Button
-            title={isLastPage ? "FINALIZAR INFORMACIÓN" : "CONTINUAR"}
-            onPress={onNext}
+            title="VOLVER AL INICIO"
+            onPress={onSkip} // Se usa onSkip ya que en el ejemplo se usaba para "VOLVER AL INICIO"
             variant="primary"
-            style={styles.button}
+            style={styles.singleButton}
           />
-
-          {!isLastPage && (
-            <Button
-              title="OMITIR ESTA INFORMACIÓN"
-              onPress={onSkip}
-              variant="secondary"
-              style={styles.skipButton}
-            />
-          )}
         </View>
       </ScrollView>
     </View>
@@ -71,61 +73,69 @@ const styles = StyleSheet.create({
   innerContainer: {
     width: width,
     flex: 1,
+    backgroundColor: '#000', // Fondo oscuro como en el ejemplo
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end', // Iconos a la derecha como en el ejemplo
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 40,
     paddingBottom: 20,
   },
-  profileContainer: {
-    width: 40,
+  rightIconsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   profileIcon: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  profileText: {
-    fontSize: 20,
-  },
-  logoContainer: {
-    alignItems: 'center',
-  },
-  notificationContainer: {
-    width: 40,
-    alignItems: 'flex-end',
+    marginRight: 10,
   },
   notificationIcon: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  notificationText: {
+  iconText: {
     fontSize: 20,
+    color: 'white', // Color de los iconos como en el ejemplo
   },
   scrollView: {
     flex: 1,
+  },
+  scrollContentContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
   content: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
-    paddingTop: 60,
+    width: '100%',
+  },
+  mainComersiumLogo: {
+    width: 200,
+    height: 200,
+    marginBottom: 30,
+  },
+  comUserImage: {
+    width: 250,
+    height: 100, 
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
+    textAlign: 'center',
     marginTop: 30,
     marginBottom: 20,
   },
@@ -135,13 +145,13 @@ const styles = StyleSheet.create({
     color: '#ccc',
     textAlign: 'center',
     marginBottom: 60,
+    paddingHorizontal: 20,
+    maxWidth: 600,
   },
-  button: {
-    width: '100%',
+  singleButton: {
     marginTop: 20,
-  },
-  skipButton: {
-    width: '100%',
-    marginTop: 10,
+    marginBottom: 20,
+    width: '90%',
+    maxWidth: 300,
   },
 });
