@@ -1,27 +1,24 @@
-// McDonaldsInfoScreen.tsx
-
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import ComersiumLogo from "../../components/ComersiumLogo"; // Asegúrate de la ruta correcta
+import ComersiumLogo from "../../components/ComersiumLogo";
 
-// Datos de ejemplo para McDonald's (se mantienen igual, aunque no todos se usan)
 const MCDONALDS_DATA = {
   name: "McDonald's",
   headerImage: "https://api.a0.dev/assets/image?text=McDonalds%20Header%202&aspect=2:1",
   rating: "4.5 (2k+ comentarios)",
   distance: "4.5 km de distancia",
   deliveryTime: "15 mins Entrega",
-  foodQuality: "350 ra Good food",
+  foodQuality: "350+ valoraciones", // Pequeña modificación aquí
   products: [
     { id: 'p1', name: 'Big Mac', image: 'https://api.a0.dev/assets/image?text=Big%20Mac&aspect=1:1', price: 'U$ 6.00' },
     { id: 'p2', name: 'McNuggets', image: 'https://api.a0.dev/assets/image?text=McNuggets&aspect=1:1', price: 'U$ 5.50' },
@@ -43,7 +40,6 @@ export default function McDonaldsInfoScreen() {
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      {/* Nuevo Header: Contiene solo la flecha de atrás y el avatar */}
       <View style={styles.appHeader}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={28} color="white" />
@@ -53,32 +49,28 @@ export default function McDonaldsInfoScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Imagen del establecimiento (McDonald's) que va JUSTO debajo del header */}
       <View style={styles.restaurantImageContainer}>
         <Image
           source={{ uri: MCDONALDS_DATA.headerImage }}
           style={styles.restaurantImage}
           resizeMode="cover"
         />
-        <View style={styles.imageOverlay} /> {/* Overlay para oscurecer la imagen */}
+        <View style={styles.imageOverlay} />
       </View>
 
-      {/* Cuerpo principal desplazable que empieza debajo de la imagen */}
       <ScrollView style={styles.scrollViewContent}>
-        {/* Pestañas de Información */}
         <View style={styles.tabsContainer}>
           <TouchableOpacity
-            style={styles.tabButton} // "Información General" ahora es el botón inactivo
-            onPress={() => navigation.navigate("McDonaldsDetails" as never)} // Volver a McDonaldsDetails
+            style={styles.tabButton}
+            onPress={() => navigation.navigate("McDonaldsDetails" as never)}
           >
             <Text style={styles.tabButtonText}>Información General</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.tabButtonActive}> {/* "Otros detalles" es el botón activo */}
+          <TouchableOpacity style={styles.tabButtonActive}>
             <Text style={styles.tabButtonTextActive}>Otros detalles</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Sección de Calificación y Detalles (Se mantiene ya que es información general) */}
         <View style={styles.detailsRow}>
           <View style={styles.detailItem}>
             <Ionicons name="star" size={18} color="#FFD700" />
@@ -98,7 +90,6 @@ export default function McDonaldsInfoScreen() {
           </View>
         </View>
 
-        {/* Nueva sección: Información de McDonald's Nicaragua */}
         <View style={styles.infoNicaraguaContainer}>
           <Text style={styles.infoNicaraguaTitle}>McDonald&apos;s Nicaragua</Text>
           <Text style={styles.infoNicaraguaText}>
@@ -106,11 +97,9 @@ export default function McDonaldsInfoScreen() {
           </Text>
         </View>
 
-        {/* Espacio al final del ScrollView */}
         <View style={{ height: 100 }} />
       </ScrollView>
 
-      {/* Barra de Navegación Inferior */}
       <View style={styles.bottomNavBar}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("HomeScreen" as never)}>
           <Ionicons name="home-outline" size={24} color="#777" />
@@ -142,7 +131,6 @@ export default function McDonaldsInfoScreen() {
   );
 }
 
-// --- ESTILOS ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -153,7 +141,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 15,
-    paddingTop: 50, // Ajusta esto para alinear con la StatusBar
+    paddingTop: 50,
     paddingBottom: 15,
     backgroundColor: "#1B1B1B",
   },
@@ -251,8 +239,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 15,
   },
-  // Estos estilos ya no son estrictamente necesarios si las secciones se quitan,
-  // pero los mantengo por si decides reutilizarlos en otro lugar o volver atrás.
   productsScrollContent: {
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -290,7 +276,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
-  // Nueva sección de estilos para la información de Nicaragua
   infoNicaraguaContainer: {
     backgroundColor: "#1B1B1B",
     borderRadius: 8,

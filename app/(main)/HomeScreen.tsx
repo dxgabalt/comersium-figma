@@ -2,26 +2,19 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useRef, useState } from 'react';
-import { Dimensions, FlatList, Image, ImageSourcePropType, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ComersiumText from '../../components/ComersiumText';
+import { Dimensions, FlatList, Image, ImageSourcePropType, ImageStyle, ScrollView, StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import DiamondIcon from '../../assets/images/DiamondICon.png'; // Asegúrate de que esta importación sea correcta
+import DiamondIcon from '../../assets/images/DiamondICon.png';
+import Vector from '../../assets/images/Vector.png';
 
+import { router } from 'expo-router';
 import Carrusel1 from '../../assets/images/Carrusel1.png';
 import Carrusel2 from '../../assets/images/Carrusel2.png';
 import Carrusel3 from '../../assets/images/Carrusel3.png';
 import Carrusel4 from '../../assets/images/Carrusel4.png';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  store: string;
-  discount?: number;
-}
 
 interface CarouselItem {
   id: string;
@@ -32,47 +25,12 @@ interface CarouselItem {
   description: string;
 }
 
-// Puedes definir una interfaz para los ítems de promoción si quieres tipar más estrictamente
 interface PromotionItem {
   id: string;
   image: string;
   rating: number;
   store: string;
-  // Añade cualquier otra propiedad necesaria para la pantalla McDonaldsDetails si la hay
 }
-
-const PRODUCTS: Product[] = [
-  {
-    id: '1',
-    name: 'Base Camp Voyager Duffel 42 L',
-    price: 135,
-    image: 'https://api.a0.dev/assets/image?text=North%20Face%20Duffel%20Bag&aspect=1:1',
-    store: 'The north face',
-    discount: 20,
-  },
-  {
-    id: '2',
-    name: 'Zapatillas Ultraboost',
-    price: 180,
-    image: 'https://api.a0.dev/assets/image?text=Adidas%20Ultraboost&aspect=1:1',
-    store: 'Adidas',
-  },
-  {
-    id: '3',
-    name: 'Chaqueta Impermeable',
-    price: 250,
-    image: 'https://api.a0.dev/assets/image?text=Waterproof%20Jacket&aspect=1:1',
-    store: 'Columbia',
-    discount: 15,
-  },
-  {
-    id: '4',
-    name: 'Mochila Resistente',
-    price: 120,
-    image: 'https://api.a0.dev/assets/image?text=Backpack&aspect=1:1',
-    store: 'Osprey',
-  },
-];
 
 const CAROUSEL_DATA: CarouselItem[] = [
   { id: '1', image: Carrusel1, logo: 'Comersium', title: 'Bienvenido a Comersium', subtitle: 'Tu marketplace de confianza', description: 'Descubre ofertas increíbles y una gran variedad de productos.' },
@@ -81,7 +39,6 @@ const CAROUSEL_DATA: CarouselItem[] = [
   { id: '4', image: Carrusel4, logo: 'Comersium', title: 'Promociones Especiales', subtitle: 'Descuentos imperdibles', description: 'Aprovecha nuestras ofertas por tiempo limitado en tus productos favoritos.' },
 ];
 
-// Datos para las promociones destacadas, para facilitar el mapeo.
 const PROMOTIONS_DATA: PromotionItem[] = [
   { id: 'promo1', image: 'https://api.a0.dev/assets/image?text=Watermelon%20Drink&aspect=1:1', rating: 4.5, store: 'Comercio 1' },
   { id: 'promo2', image: 'https://api.a0.dev/assets/image?text=Energy%20Drink&aspect=1:1', rating: 4.8, store: 'Comercio 2' },
@@ -90,9 +47,53 @@ const PROMOTIONS_DATA: PromotionItem[] = [
 
 const AUTO_SWIPE_INTERVAL = 5000;
 
+// Interfaz para tipar el objeto de estilos
+interface Style {
+  container: ViewStyle;
+  topHeader: ViewStyle;
+  topHeaderDiamondIcon: ImageStyle;
+  headerIcons: ViewStyle;
+  profileIcon: ViewStyle;
+  notificationIcon: ViewStyle;
+  tabsContainerOverlay: ViewStyle;
+  tab: ViewStyle;
+  activeTab: ViewStyle;
+  tabText: TextStyle;
+  activeTabText: TextStyle;
+  fullScreenCarousel: ViewStyle;
+  heroBanner: ViewStyle;
+  heroBannerImage: ImageStyle;
+  heroBannerOverlay: ViewStyle;
+  heroBannerContent: ViewStyle;
+  heroBannerTitle: TextStyle;
+  heroBannerSubtitle: TextStyle;
+  heroBannerDescription: TextStyle;
+  carouselButtonsContainer: ViewStyle;
+  carouselButton: ViewStyle;
+  carouselButtonActive: ViewStyle;
+  fixedPromotionsSection: ViewStyle; // Nuevo estilo para la sección de promociones fijas
+  sectionTitle: TextStyle;
+  promotionsContainer: ViewStyle;
+  promotionItem: ViewStyle;
+  promotionImage: ImageStyle;
+  promotionRating: ViewStyle;
+  promotionRatingText: TextStyle;
+  promotionStore: TextStyle;
+  bottomNavBar: ViewStyle;
+  navItem: ViewStyle;
+  navItemActive: ViewStyle;
+  navItemDiamond: ViewStyle;
+  navItemCenterBg: ViewStyle;
+  diamondIcon: ImageStyle;
+  navText: TextStyle;
+  navTextActive: TextStyle;
+  footerVector: ImageStyle;
+}
+
+
 export default function HomeScreen() {
   const navigation = useNavigation();
-  const [selectedTab, setSelectedTab] = useState('home');
+  const [selectedTab, setSelectedTab] = useState('logowall');
   const navItemRefs = useRef<{ [key: string]: any }>({});
   const carouselRef = useRef<FlatList<CarouselItem>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -105,34 +106,36 @@ export default function HomeScreen() {
     { key: 'settings', icon: 'settings-outline', text: 'Ajustes', route: 'CategoriesScreen' },
   ];
 
-  // Función para manejar la navegación a McDonaldsDetails
   const handlePromotionPress = () => {
-    navigation.navigate('McDonaldsDetails' as never); // Asegúrate de que 'McDonaldsDetails' sea el nombre correcto de tu ruta
+    navigation.navigate('McDonaldsDetails' as never);
   };
 
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab);
-    // Lógica de navegación basada en el tab seleccionado
-    if (tab === 'home') {
-      // Si el tab es 'home', navega a la HomeScreen (si es parte de un navegador Stack/Tab principal)
-      // O no hagas nada si ya estás en Home y solo quieres actualizar el estado.
-      // Para Expo Router con grupos, (main) podría ser el grupo principal.
-      // Aquí asumo que 'HomeScreen' es la ruta actual y no necesitas navegar a ella misma.
-    } else if (tab === 'logowall') {
-      // *** CAMBIO CLAVE AQUÍ: NAVEGAR A LOGOWALLSCREEN ***
+    if (tab === 'logowall') {
       navigation.navigate('LogoWallScreen' as never);
     } else if (tab === 'populares') {
-      navigation.navigate('Home' as never); // Asumo que 'Home' es la ruta a la que quieres ir desde 'populares'
+      navigation.navigate('Home' as never);
     } else {
-      // Para otros tabs, si tienen una ruta asociada en navItems, podrías navegar.
       const selectedNavItem = navItems.find(item => item.key === tab);
       if (selectedNavItem && selectedNavItem.route && selectedNavItem.route !== 'HomeScreen') {
-        navigation.navigate(selectedNavItem.route as never);
+        // En el caso de "Ajustes", navegar a la pantalla de perfil
+        if (selectedNavItem.key === 'settings') {
+          router.push('ProfileScreen' as never);
+        } else {
+          navigation.navigate(selectedNavItem.route as never);
+        }
       }
     }
   };
 
-  const renderCarouselItem = ({ item }: { item: CarouselItem }) => (
+  // Función para manejar la navegación al ProfileScreen desde el icono del header
+  const handleProfileIconPress = () => {
+    navigation.navigate('ProfileScreen' as never); // <--- NUEVA FUNCIÓN PARA NAVEGAR AL PERFIL
+  };
+
+
+  const renderCarouselItem = ({ item, index }: { item: CarouselItem, index: number }) => (
     <View style={styles.heroBanner}>
       <Image
         source={item.image}
@@ -140,12 +143,29 @@ export default function HomeScreen() {
       />
       <View style={styles.heroBannerOverlay} />
       <View style={styles.heroBannerContent}>
-        <Text style={styles.heroBannerLogo}>{item.logo}</Text>
         <Text style={styles.heroBannerTitle}>{item.title}</Text>
         <Text style={styles.heroBannerSubtitle}>{item.subtitle}</Text>
         <Text style={styles.heroBannerDescription}>
           {item.description}
         </Text>
+      </View>
+      <View style={styles.carouselButtonsContainer}>
+        {CAROUSEL_DATA.map((_, i) => (
+          <TouchableOpacity
+            key={i}
+            style={[
+              styles.carouselButton,
+              i === currentIndex && styles.carouselButtonActive,
+            ]}
+            onPress={() => {
+              carouselRef.current?.scrollToOffset({
+                offset: i * width,
+                animated: true,
+              });
+              setCurrentIndex(i);
+            }}
+          />
+        ))}
       </View>
     </View>
   );
@@ -167,17 +187,36 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('subscription' as never)}>
-          <Image
-            source={DiamondIcon}
-            style={styles.headerDiamondIcon}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-        <ComersiumText size="small" color="white" />
+      {/* Carrusel a pantalla completa - es el fondo de todo */}
+      <FlatList
+        ref={carouselRef}
+        data={CAROUSEL_DATA}
+        renderItem={renderCarouselItem}
+        keyExtractor={(item) => item.id}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        style={styles.fullScreenCarousel}
+        onViewableItemsChanged={({ viewableItems }) => {
+          if (viewableItems.length > 0 && viewableItems[0].index !== null) {
+            setCurrentIndex(viewableItems[0].index);
+          }
+        }}
+        viewabilityConfig={{
+          itemVisiblePercentThreshold: 50,
+        }}
+      />
+
+      {/* Elementos fijos en la parte superior, superpuestos al carrusel */}
+      <View style={styles.topHeader}>
+        <Image
+          source={DiamondIcon}
+          style={styles.topHeaderDiamondIcon}
+          resizeMode="contain"
+        />
         <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.profileIcon}>
+          {/* CAMBIO CLAVE: AÑADIR onPress PARA NAVEGAR A PROFILESCREEN */}
+          <TouchableOpacity style={styles.profileIcon} onPress={handleProfileIconPress}>
             <Ionicons name="person-circle-outline" size={24} color="white" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.notificationIcon}>
@@ -186,10 +225,10 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabsContainer}>
+      {/* Tabs de navegación, también fijos y superpuestos */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabsContainerOverlay}>
         <TouchableOpacity
           style={[styles.tab, selectedTab === 'logowall' && styles.activeTab]}
-          // Ahora este onPress navegará a LogoWallScreen
           onPress={() => handleTabChange('logowall')}
         >
           <Text style={[styles.tabText, selectedTab === 'logowall' && styles.activeTabText]}>LOGOWALL</Text>
@@ -214,33 +253,15 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </ScrollView>
 
-      <FlatList
-        ref={carouselRef}
-        data={CAROUSEL_DATA}
-        renderItem={renderCarouselItem}
-        keyExtractor={(item) => item.id}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        style={styles.carouselContainer}
-        onViewableItemsChanged={({ viewableItems }) => {
-          if (viewableItems.length > 0 && viewableItems[0].index !== null) {
-            setCurrentIndex(viewableItems[0].index);
-          }
-        }}
-        viewabilityConfig={{
-          itemVisiblePercentThreshold: 50,
-        }}
-      />
-
-      <View style={styles.section}>
+      {/* Sección de Promociones destacadas - ahora fija, superpuesta al carrusel */}
+      <View style={styles.fixedPromotionsSection}>
         <Text style={styles.sectionTitle}>Promociones destacadas ★</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.promotionsContainer}>
           {PROMOTIONS_DATA.map((promotion) => (
             <TouchableOpacity
               key={promotion.id}
               style={styles.promotionItem}
-              onPress={handlePromotionPress} // Aquí se llama a la función de navegación
+              onPress={handlePromotionPress}
             >
               <Image
                 source={{ uri: promotion.image }}
@@ -255,6 +276,14 @@ export default function HomeScreen() {
         </ScrollView>
       </View>
 
+      {/* Fondo del Footer con Vector.png (posicionado absolutamente en la parte inferior) */}
+      <Image
+        source={Vector}
+        style={styles.footerVector}
+        resizeMode="stretch"
+      />
+
+      {/* Barra de navegación inferior (con sus iconos, posicionado absolutamente en la parte inferior) */}
       <View style={styles.bottomNavBar}>
         {navItems.map((item, index) => (
           <TouchableOpacity
@@ -298,21 +327,106 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+// Aplicamos la interfaz Style a StyleSheet.create
+const styles = StyleSheet.create<Style>({
   container: {
     flex: 1,
     backgroundColor: '#121212',
   },
-  header: {
+  // El carrusel ahora es el único ScrollView de contenido
+  fullScreenCarousel: {
+    width: width,
+    height: height, // El carrusel ocupa toda la altura visible
+    position: 'absolute', // Es el fondo, así que es absoluto
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  heroBanner: {
+    width: width,
+    height: '100%',
+    position: 'relative',
+  },
+  heroBannerImage: {
+    width: '100%',
+    height: '100%',
+  },
+  heroBannerOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    zIndex: 1,
+  },
+  heroBannerContent: {
+    position: 'absolute',
+    bottom: height * 0.45, // Ajusta esta posición si es necesario
+    left: 0,
+    right: 0,
+    padding: 20,
+    zIndex: 2,
+    alignItems: 'center',
+  },
+  heroBannerTitle: {
+    color: '#00E5FF',
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  heroBannerSubtitle: {
+    color: 'white',
+    fontSize: 16,
+    marginBottom: 10,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  heroBannerDescription: {
+    color: 'white',
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
+    paddingHorizontal: 20,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  carouselButtonsContainer: {
+    position: 'absolute',
+    bottom: height * 0.4, // Ajusta esto para que esté por encima de las promociones si es necesario
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    zIndex: 3,
+  },
+  carouselButton: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    marginHorizontal: 5,
+  },
+  carouselButtonActive: {
+    backgroundColor: 'white',
+  },
+  // Header, Tabs y Promociones fijas
+  topHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 40,
-    paddingBottom: 20,
-    backgroundColor: '#1B1B1B',
+    paddingBottom: 10,
+    position: 'absolute',
+    width: '100%',
+    zIndex: 10, // Por encima de todo
+    backgroundColor: 'transparent',
   },
-  headerDiamondIcon: {
+  topHeaderDiamondIcon: {
     width: 30,
     height: 30,
   },
@@ -324,10 +438,13 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   notificationIcon: {},
-  tabsContainer: {
-    backgroundColor: '#1B1B1B',
+  tabsContainerOverlay: {
+    position: 'absolute',
+    top: 90, // Debajo del header
+    width: '100%',
+    zIndex: 10, // Por encima del carrusel
+    backgroundColor: 'transparent',
     paddingHorizontal: 10,
-    paddingBottom: 10,
   },
   tab: {
     paddingHorizontal: 10,
@@ -346,67 +463,28 @@ const styles = StyleSheet.create({
   activeTabText: {
     color: 'white',
   },
-  carouselContainer: {
-    width: '100%',
-    height: 300,
-  },
-  heroBanner: {
-    width: width,
-    height: '100%',
-    position: 'relative',
-  },
-  heroBannerImage: {
-    width: '100%',
-    height: '100%',
-  },
-  heroBannerOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    zIndex: 1,
-  },
-  heroBannerContent: {
+  fixedPromotionsSection: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 20,
-    zIndex: 2,
-  },
-  heroBannerLogo: {
-    color: '#FFD700',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  heroBannerTitle: {
-    color: 'white',
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  heroBannerSubtitle: {
-    color: '#00E5FF',
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  heroBannerDescription: {
-    color: 'white',
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  section: {
-    marginTop: 20,
+    bottom: 70, // Posiciona la sección de promociones justo encima de la barra de navegación inferior
+    width: '100%',
+    zIndex: 5, // Por encima del carrusel, pero por debajo de la barra de navegación
     paddingHorizontal: 20,
+    backgroundColor: 'rgba(43, 43, 43, 0.14)', // Fondo semi-transparente para visibilidad
+    paddingVertical: 15,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
     marginBottom: 12,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   promotionsContainer: {
     flexDirection: 'row',
-    marginBottom: 20,
   },
   promotionItem: {
     width: 120,
@@ -414,7 +492,7 @@ const styles = StyleSheet.create({
   },
   promotionImage: {
     width: '100%',
-    height: 120,
+    height: 150,
     borderRadius: 10,
   },
   promotionRating: {
@@ -431,17 +509,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   promotionStore: {
-    color: '#777',
-    fontSize: 12,
+    color: '#DDD',
+    fontSize: 13,
     marginTop: 5,
+    fontWeight: '500',
   },
   bottomNavBar: {
     flexDirection: 'row',
-    backgroundColor: '#1B1B1B',
     height: 70,
     borderTopWidth: 1,
-    borderTopColor: '#333',
+    borderTopColor: 'transparent',
     paddingHorizontal: 10,
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    zIndex: 10, // Los iconos de la barra de navegación deben estar encima de la imagen Vector y las promociones
   },
   navItem: {
     flex: 1,
@@ -468,11 +550,19 @@ const styles = StyleSheet.create({
     height: 30,
   },
   navText: {
-    color: '#777',
+    color: '#EEE',
     fontSize: 12,
     marginTop: 4,
+    fontWeight: '500',
   },
   navTextActive: {
     color: '#00E5FF',
+  },
+  footerVector: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: 70,
+    zIndex: 9, // La imagen de fondo debe estar debajo de la bottomNavBar
   },
 });

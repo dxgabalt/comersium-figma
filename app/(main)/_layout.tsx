@@ -10,12 +10,14 @@ export default function MainLayout() {
         headerShown: false,
       }}
     >
-        <Stack.Screen name="HomeScreen" />           
-        <Stack.Screen name="CategoriesScreen" />     
-        <Stack.Screen name="CheckoutScreen" />           
-        <Stack.Screen name="LogoWallScreen" />    
-        <Stack.Screen name="McDonaldsDetails " />   
-        <Stack.Screen name="McDonaldsInfo " />   
+        <Stack.Screen name="HomeScreen"/>           
+        <Stack.Screen name="CategoriesScreen"/>     
+        <Stack.Screen name="CheckoutScreen"/>           
+        <Stack.Screen name="LogoWallScreen"/>    
+        <Stack.Screen name="McDonaldsDetails"/>   
+        <Stack.Screen name="McDonaldsInfo"/> 
+        <Stack.Screen name="ProfileScreen"/>
+        <Stack.Screen name="EditUser"/>            
      
       </Stack>
 

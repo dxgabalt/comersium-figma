@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import ComersiumLogo from "../../components/ComersiumLogo";
 
-// Datos de ejemplo para McDonald's (se mantienen igual)
 const MCDONALDS_DATA = {
   name: "McDonald's",
   headerImage: "https://api.a0.dev/assets/image?text=McDonalds%20Header%202&aspect=2:1",
@@ -22,7 +21,7 @@ const MCDONALDS_DATA = {
   foodQuality: "350 ra Good food",
   products: [
     { id: 'p1', name: 'Big Mac', image: 'https://api.a0.dev/assets/image?text=Big%20Mac&aspect=1:1', price: 'U$ 6.00' },
-    { id: 'p2', name: 'McNuggets', image: 'https://api.a0.dev/assets/image?text=McNuggets&aspect=1:1', price: 'U$ 5.50' },
+    { id: 'p2', name: 'McNuggets', image: 'https://api.a0.dev:assets/image?text=McNuggets&aspect=1:1', price: 'U$ 5.50' },
     { id: 'p3', name: 'Papas Fritas', image: 'https://api.a0.dev/assets/image?text=Fries&aspect=1:1', price: 'U$ 3.00' },
     { id: 'p4', name: 'McFlurry', image: 'https://api.a0.dev/assets/image?text=McFlurry&aspect=1:1', price: 'U$ 4.00' },
   ],
@@ -41,7 +40,6 @@ export default function McDonaldsDetailScreen() {
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      {/* Nuevo Header: Contiene solo la flecha de atrás y el avatar */}
       <View style={styles.appHeader}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={28} color="white" />
@@ -51,33 +49,28 @@ export default function McDonaldsDetailScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Imagen del establecimiento (McDonald's) que va JUSTO debajo del header */}
       <View style={styles.restaurantImageContainer}>
         <Image
           source={{ uri: MCDONALDS_DATA.headerImage }}
           style={styles.restaurantImage}
           resizeMode="cover"
         />
-        <View style={styles.imageOverlay} /> {/* Overlay para oscurecer la imagen */}
+        <View style={styles.imageOverlay} />
       </View>
 
-      {/* Cuerpo principal desplazable que empieza debajo de la imagen */}
       <ScrollView style={styles.scrollViewContent}>
-        {/* Pestañas de Información */}
         <View style={styles.tabsContainer}>
           <TouchableOpacity style={styles.tabButtonActive}>
             <Text style={styles.tabButtonTextActive}>Información General</Text>
           </TouchableOpacity>
-          {/* CAMBIO CLAVE AQUÍ: Navegación a McDonaldsInfo */}
           <TouchableOpacity
             style={styles.tabButton}
-            onPress={() => navigation.navigate("McDonaldsInfo" as never)} // Cambiado a McDonaldsInfo
+            onPress={() => navigation.navigate("McDonaldsInfo" as never)}
           >
             <Text style={styles.tabButtonText}>Otros detalles</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Sección de Calificación y Detalles */}
         <View style={styles.detailsRow}>
           <View style={styles.detailItem}>
             <Ionicons name="star" size={18} color="#FFD700" />
@@ -97,7 +90,6 @@ export default function McDonaldsDetailScreen() {
           </View>
         </View>
 
-        {/* Sección de Productos Recientes / "¿Quieres repetir?" */}
         <Text style={styles.sectionTitle}>¿Quieres repetir? Productos pedidos recientes</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.productsScroll}>
           {MCDONALDS_DATA.products.map(product => (
@@ -109,7 +101,6 @@ export default function McDonaldsDetailScreen() {
           ))}
         </ScrollView>
 
-        {/* Sección de Promociones Destacadas */}
         <Text style={styles.sectionTitle}>Promociones destacadas</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.promotionsScroll}>
           {MCDONALDS_DATA.promotions.map(promo => (
@@ -124,11 +115,9 @@ export default function McDonaldsDetailScreen() {
           ))}
         </ScrollView>
 
-        {/* Espacio al final del ScrollView */}
         <View style={{ height: 100 }} />
       </ScrollView>
 
-      {/* Barra de Navegación Inferior */}
       <View style={styles.bottomNavBar}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("HomeScreen" as never)}>
           <Ionicons name="home-outline" size={24} color="#777" />
@@ -160,7 +149,6 @@ export default function McDonaldsDetailScreen() {
   );
 }
 
-// --- Asegúrate de que el objeto styles esté definido AQUÍ, sin nada más debajo ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -171,19 +159,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 15,
-    paddingTop: 50, // Ajusta esto para alinear con la StatusBar
+    paddingTop: 50,
     paddingBottom: 15,
-    backgroundColor: "#1B1B1B", // Color de fondo para esta barra superior
+    backgroundColor: "#1B1B1B",
   },
   backButton: {
     padding: 5,
   },
   userAvatar: {
-    // Estilos opcionales para el avatar del usuario
   },
   restaurantImageContainer: {
     width: "100%",
-    height: 200, // Altura deseada para la imagen del restaurante
+    height: 200,
     position: 'relative',
   },
   restaurantImage: {
@@ -208,7 +195,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1B1B1B",
     borderRadius: 25,
     marginHorizontal: 20,
-    marginTop: 15, // Márgen normal debajo de la imagen
+    marginTop: 15,
     padding: 5,
     justifyContent: "space-around",
     alignItems: "center",

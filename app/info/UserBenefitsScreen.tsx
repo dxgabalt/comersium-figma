@@ -68,7 +68,7 @@ export default function UserBenefitsScreen({ onSkip, currentPage, totalPages }: 
 
           <View style={styles.benefitItem}>
             <TouchableOpacity style={styles.benefitButton}>
-              <Text style={styles.benefitText}>Encuentra lo que necesitas de forma rápida y sencilla</Text> {/* Texto ajustado para usuario */}
+              <Text style={styles.benefitText}>Encuentra lo que necesitas de forma rápida y sencilla</Text>
             </TouchableOpacity>
           </View>
 
